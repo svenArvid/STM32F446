@@ -133,9 +133,6 @@
     <ClCompile Include="..\..\Src\Util.c" />
     <ClCompile Include="UnitTest_main.c" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\Inc\Util.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

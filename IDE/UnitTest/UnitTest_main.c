@@ -129,7 +129,7 @@ void UnitTest_CrcCalcCrc8(void)
 // Main Entry point
 int main()
 {
-  //UnitTest_Util_Interpolate();
+  UnitTest_Util_Interpolate();
 
   UnitTest_CrcTableGenerator();
 
