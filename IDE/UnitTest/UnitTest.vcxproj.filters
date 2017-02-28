@@ -8,10 +8,15 @@
     <ClCompile Include="..\..\Src\Util.c">
       <Filter>TestObjects</Filter>
     </ClCompile>
+    <ClCompile Include="UnitTest_Crc.c" />
+    <ClCompile Include="UnitTest_Util.c" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TestObjects">
       <UniqueIdentifier>{e4908f68-3e0d-4c2d-aa6a-a47636e5d10f}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UnitTest.h" />
   </ItemGroup>
 </Project>
