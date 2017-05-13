@@ -60,6 +60,7 @@ void PendSV_Handler(void);
 void SysTick_Handler(void);
 
 void TIM8_UP_TIM13_IRQHandler(void);
+void TIM8_TRG_COM_TIM14_IRQHandler(void);
 
 #ifdef __cplusplus
 }

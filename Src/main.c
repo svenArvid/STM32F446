@@ -20,6 +20,7 @@
 #include "Uart.h"
 #include "InputCapture.h"
 #include "TicToc.h"
+#include "NeoPixel.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -92,6 +93,7 @@ static void Main_Init(void)
   RadioTransmit_Init();
   Adc_Init();
   Uart_Init();
+  NeoPixel_Init();
 }
 
 static void Loop1ms(void)
@@ -128,6 +130,8 @@ static void Loop100ms(void)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, !HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7));
 
   RadioTransmit_100ms();
+
+  NeoPixel_100ms();
 }
 
 static void Loop500ms(void)

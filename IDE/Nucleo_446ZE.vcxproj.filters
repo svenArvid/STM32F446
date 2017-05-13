@@ -273,6 +273,9 @@
     <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.14.0\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_usb.c">
       <Filter>HAL Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\NeoPixel.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Inc\main.h">
@@ -315,6 +318,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Inc\InputCapture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\NeoPixel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

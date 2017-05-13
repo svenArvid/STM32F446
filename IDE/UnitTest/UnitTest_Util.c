@@ -71,28 +71,27 @@ void UnitTest_Util_SRLatch(void) {
   Util_SetSRLatchState(&latch, Set, Reset);
   PRINT_RESULT("Inputs unchanged. state unchanged, thus Toggled is 0")
 
-
-    Set = FALSE;
+  Set   = FALSE;
   Reset = FALSE;
   Util_SetSRLatchState(&latch, Set, Reset);
   PRINT_RESULT("Inputs zero, state is latched")
 
-    Set = FALSE;
+  Set   = FALSE;
   Reset = TRUE;
   Util_SetSRLatchState(&latch, Set, Reset);
   PRINT_RESULT("Reset")
 
-    Set = FALSE;
+  Set   = FALSE;
   Reset = FALSE;
   Util_SetSRLatchState(&latch, Set, Reset);
   PRINT_RESULT("Inputs zero, state is latched")
 
-    Set = TRUE;
+  Set   = TRUE;
   Reset = FALSE;
   Util_SetSRLatchState(&latch, Set, Reset);
   PRINT_RESULT("Set")
 
-    Set = TRUE;
+  Set   = TRUE;
   Reset = TRUE;
   Util_SetSRLatchState(&latch, Set, Reset);
   PRINT_RESULT("Both inputs active, Reset dominates")

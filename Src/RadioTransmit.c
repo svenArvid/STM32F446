@@ -112,12 +112,6 @@ void RadioTransmit_Init(void)
   
 }
 
-static void Timer_SetPeriod(TIM_HandleTypeDef *htim, uint32_t Period)
-{
-  /* Set the Auto-reload value */
-  htim->Instance->ARR = Period;
-}
-
 // ============================================================
 static volatile bool RadioTxBusy = FALSE;
 static volatile uint32_t WfIndex = 0;
@@ -285,7 +279,7 @@ void RadioTransmit_TxStart(void)
 
   /* Start TIMER 13 in interrupt mode */
   Pwm_SetDuty(TIM13, TIM_CHANNEL_1, Waveform[0]);
-  Timer_SetPeriod(&Timer13Handle, Waveform[0] + Waveform[1]);
+  Pwm_SetPeriod(&Timer13Handle, Waveform[0] + Waveform[1]);
 
   HAL_TIM_OC_Start(&Timer13Handle, TIM_CHANNEL_1);
   HAL_TIM_Base_Start_IT(&Timer13Handle);
@@ -395,6 +389,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     }
   }
   Pwm_SetDuty(TIM13, TIM_CHANNEL_1, Waveform[WfIndex]);
-  Timer_SetPeriod(&Timer13Handle, Waveform[WfIndex] + Waveform[WfIndex + 1]);
+  Pwm_SetPeriod(&Timer13Handle, Waveform[WfIndex] + Waveform[WfIndex + 1]);
 }
 

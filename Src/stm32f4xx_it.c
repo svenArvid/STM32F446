@@ -42,6 +42,8 @@
 #include "stm32f4xx_it.h"
 #include "RadioTransmit.h"
 #include "TicToc.h"
+#include "NeoPixel.h"
+
 
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
@@ -185,12 +187,7 @@ void TIM8_UP_TIM13_IRQHandler(void)
 #endif
 }
 
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
+// NOTE: TIM8_TRG_COM_TIM14_IRQHandler is in NeoPixel.c
+// void TIM8_TRG_COM_TIM14_IRQHandler(void)
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

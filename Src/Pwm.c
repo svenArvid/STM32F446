@@ -190,7 +190,13 @@ void Pwm_SetDuty(TIM_TypeDef *TIMx_Pwm, uint32_t Channel, uint32_t Duty)
   }
 }
 
+void Pwm_SetPeriod(TIM_HandleTypeDef *htim, uint32_t Period)
+{
+  /* Set the Auto-reload value */
+  htim->Instance->ARR = Period;
+}
 
+//=====================================================
 void Pwm_20ms(void)
 {
   static uint32_t PwmDuty = 0;
