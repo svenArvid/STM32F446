@@ -141,3 +141,18 @@ void UnitTest_Util_FilterState(void)
     PRINT_RESULT("");
   }
 }
+
+void UnitTest_Util_Map(void)
+{
+  int32_t result;
+  
+  printf("\nTesting Util_Map\n");
+  result = Util_Map(320, 600, 0, 0, 64);
+  printf("Util_Map(320, 600, 0, 0, 64): %4d\n\n", result);
+
+  result = Util_Map(500, 600, 0, 0, 64);
+  printf("Util_Map(500, 600, 0, 0, 64): %4d\n\n", result);
+
+  result = Util_Map(700, 600, 0, 0, 64);
+  printf("Util_Map(700, 600, 0, 0, 64): %4d\n\n", result);
+}

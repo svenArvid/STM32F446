@@ -5,7 +5,7 @@
 #include "stm32f4xx_hal.h"
 #include "ProjectDefs.h"
 
-#define NUM_LEDS  3
+#define NUM_LEDS  16
 #define MOST_SIG_COLOR_BIT  23
 #define NEO_PIXEL_DATA_PIN  GPIO_PIN_9
 
@@ -37,6 +37,14 @@
 #define BIT_G5                 ((uint32_t)0x200000U)  
 #define BIT_G6                 ((uint32_t)0x400000U)  
 #define BIT_G7                 ((uint32_t)0x800000U)  // Green color most significant bit
+
+typedef struct {
+  uint32_t ColorData[NUM_LEDS];
+  int32_t PreComputedDuty;
+  int32_t currLED;
+  int32_t ColorBit;
+  bool TxBusy;
+} NeoPixel_TxData;
 
 extern TIM_HandleTypeDef        Timer14Handle;
 

@@ -13,4 +13,5 @@ extern void UnitTest_CrcCalcCrc8(void);
 extern void UnitTest_Util_Interpolate(void);
 extern void UnitTest_Util_SRLatch(void);
 extern void UnitTest_Util_FilterState(void);
+extern void UnitTest_Util_Map(void);
 #endif // __UNIT_TEST_H

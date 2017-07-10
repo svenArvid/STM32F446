@@ -150,3 +150,13 @@ int32_t Util_FilterState(Util_Filter* filter, int32_t Input) {
 void Util_SetFilterState(Util_Filter* filter, int32_t Input) {
   filter->State = Input * MULTIPLIER;
 }
+
+int32_t Util_Limit(int32_t Input, int32_t Min, int32_t Max)
+{
+  if (Input < Min)
+    return Min;
+  else if (Input > Max)
+    return Max;
+  else
+    return Input;  
+}

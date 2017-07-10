@@ -65,6 +65,8 @@ int main()
 
   UnitTest_CrcCalcCrc8();
 
+  UnitTest_Util_Map();
+
   UnitTest_TestCaseWrapper("TC_Util_SRLatch.txt", UnitTest_Util_SRLatch);
 
   UnitTest_TestCaseWrapper("TC_Util_FilterState.txt", UnitTest_Util_FilterState);
