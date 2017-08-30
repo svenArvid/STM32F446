@@ -233,10 +233,12 @@
     <ClCompile Include="..\Src\ErrorHandler.c" />
     <ClCompile Include="..\Src\InputCapture.c" />
     <ClCompile Include="..\Src\main.c" />
+    <ClCompile Include="..\Src\MotorDriver.c" />
     <ClCompile Include="..\Src\NeoPixel.c" />
     <ClCompile Include="..\Src\Pwm.c" />
     <ClCompile Include="..\Src\RadioTransmit.c" />
     <ClCompile Include="..\Src\SensorMgr.c" />
+    <ClCompile Include="..\Src\SpeedSensor.c" />
     <ClCompile Include="..\Src\stm32f4xx_hal_msp.c" />
     <ClCompile Include="..\Src\stm32f4xx_it.c" />
     <ClCompile Include="..\Src\system_stm32f4xx.c" />
@@ -250,11 +252,13 @@
     <ClInclude Include="..\Inc\ErrorHandler.h" />
     <ClInclude Include="..\Inc\InputCapture.h" />
     <ClInclude Include="..\Inc\main.h" />
+    <ClInclude Include="..\Inc\MotorDriver.h" />
     <ClInclude Include="..\Inc\NeoPixel.h" />
     <ClInclude Include="..\Inc\ProjectDefs.h" />
     <ClInclude Include="..\Inc\Pwm.h" />
     <ClInclude Include="..\Inc\RadioTransmit.h" />
     <ClInclude Include="..\Inc\SensorMgr.h" />
+    <ClInclude Include="..\Inc\SpeedSensor.h" />
     <ClInclude Include="..\Inc\stm32f4xx_hal_conf.h" />
     <ClInclude Include="..\Inc\stm32f4xx_it.h" />
     <ClInclude Include="..\Inc\TicToc.h" />

@@ -21,6 +21,8 @@
 #include "InputCapture.h"
 #include "TicToc.h"
 #include "NeoPixel.h"
+#include "MotorDriver.h"
+#include "SpeedSensor.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -94,16 +96,20 @@ static void Main_Init(void)
   Adc_Init();
   Uart_Init();
   NeoPixel_Init();
+
+  SpeedSensor_Init();
+  MotorDriver_Init();
 }
 
 static void Loop1ms(void)
 {
-  ;
+  SpeedSensor_1ms();
 }
 
 static void Loop4ms(void)
 {
   InputCapture_4ms();
+  SpeedSensor_4ms();
 }
 
 static void Loop20ms(void)
@@ -119,6 +125,10 @@ static void Loop20ms(void)
   Pwm_20ms();
 
   SensorMgr_20ms();
+
+  SpeedSensor_20ms();
+
+  MotorDriver_20ms();
 
 #ifdef TIC_TOC
   TicToc_20ms();

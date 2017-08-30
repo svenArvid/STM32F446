@@ -170,6 +170,16 @@
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Src/NeoPixel.c</location>
 		</link>
+    <link>
+			<name>Example/User/MotorDriver.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/Src/MotorDriver.c</location>
+		</link>
+    <link>
+			<name>Example/User/SpeedSensor.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/Src/SpeedSensor.c</location>
+		</link>
 		
 	</linkedResources>
 </projectDescription>

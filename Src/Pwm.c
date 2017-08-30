@@ -48,8 +48,8 @@ void Pwm_Init(void)
 
   uint32_t uhPrescalerValue = 0;     /* Counter Prescaler value */
 
-  // Compute the prescaler value to have TIM4 counter clock equal to 400 000 Hz to get 400 Hz Pwm signals (400000 / 1000) 
-  uhPrescalerValue = (uint32_t)((SystemCoreClock / 2) / 400000) - 1;
+  // Compute the prescaler value to have TIM4 counter clock equal to 2 MHz to get 2 KHz Pwm signals (2000000 / 1000) 
+  uhPrescalerValue = (uint32_t)((SystemCoreClock / 2) / 2000000) - 1;
 
   Timer4Handle.Instance = TIM4;
 
@@ -78,19 +78,21 @@ void Pwm_Init(void)
   sConfig.OCNPolarity  = TIM_OCNPOLARITY_HIGH;
   sConfig.OCNIdleState = TIM_OCNIDLESTATE_RESET;
   sConfig.OCIdleState  = TIM_OCIDLESTATE_RESET;
-  
+  sConfig.Pulse        = 0;
+
   /* Set the pulse values for TIMER 4 channels, one by one. Then Start PWM signals generation, one by one */
-  sConfig.Pulse = PULSE1_VALUE;
   if (HAL_TIM_PWM_ConfigChannel(&Timer4Handle, &sConfig, TIM_CHANNEL_1) != HAL_OK) { /* Configuration Error */ Error_Handler(); }
   
-  sConfig.Pulse = PWM_MAX_DUTY;
+  if (HAL_TIM_PWM_ConfigChannel(&Timer4Handle, &sConfig, TIM_CHANNEL_2) != HAL_OK) { /* Configuration Error */ Error_Handler(); }
+
   if (HAL_TIM_PWM_ConfigChannel(&Timer4Handle, &sConfig, TIM_CHANNEL_3) != HAL_OK) { /* Configuration Error */ Error_Handler(); }
 
-  sConfig.Pulse = PWM_MAX_DUTY/10;
   if (HAL_TIM_PWM_ConfigChannel(&Timer4Handle, &sConfig, TIM_CHANNEL_4) != HAL_OK) { /* Configuration Error */ Error_Handler(); }
 
   /* Start channels, one by one, TIMER 4 */
   if (HAL_TIM_PWM_Start(&Timer4Handle, TIM_CHANNEL_1) != HAL_OK) { /* PWM Generation Error */ Error_Handler(); }
+
+  if (HAL_TIM_PWM_Start(&Timer4Handle, TIM_CHANNEL_2) != HAL_OK) { /* PWM Generation Error */ Error_Handler(); }
 
   if (HAL_TIM_PWM_Start(&Timer4Handle, TIM_CHANNEL_3) != HAL_OK) { /* PWM Generation Error */ Error_Handler(); }
 
@@ -98,19 +100,18 @@ void Pwm_Init(void)
   
 
   /* Set the pulse values for TIMER 3 channels, one by one. Then Start PWM signals generation, one by one */
-  sConfig.Pulse = PWM_MAX_DUTY/4;
   if (HAL_TIM_PWM_ConfigChannel(&Timer3Handle, &sConfig, TIM_CHANNEL_1) != HAL_OK) { /* Configuration Error */ Error_Handler(); }
 
-  sConfig.Pulse = PWM_MAX_DUTY;
   if (HAL_TIM_PWM_ConfigChannel(&Timer3Handle, &sConfig, TIM_CHANNEL_2) != HAL_OK) { /* Configuration Error */ Error_Handler(); }
 
-  sConfig.Pulse = 0;
   if (HAL_TIM_PWM_ConfigChannel(&Timer3Handle, &sConfig, TIM_CHANNEL_4) != HAL_OK) { /* Configuration Error */ Error_Handler(); }
   
   /* Start channels, one by one, TIMER 3 */
   if (HAL_TIM_PWM_Start(&Timer3Handle, TIM_CHANNEL_1) != HAL_OK) { /* PWM Generation Error */ Error_Handler(); }
 
   if (HAL_TIM_PWM_Start(&Timer3Handle, TIM_CHANNEL_2) != HAL_OK) { /* PWM Generation Error */ Error_Handler(); }
+
+  // Note: Channel 3 is NOT configured since PB0 is already used by LED1.
 
   if (HAL_TIM_PWM_Start(&Timer3Handle, TIM_CHANNEL_4) != HAL_OK) { /* PWM generation Error */ Error_Handler(); }
 }

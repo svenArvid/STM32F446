@@ -52,6 +52,8 @@ extern uint8_t Util_GetTimerState(const Util_Timer* timer);
 extern int32_t Util_SetRampState(Util_Ramp* ramp, int32_t Input);
 extern int32_t Util_FilterState(Util_Filter* filter, int32_t Input);
 extern void Util_SetFilterState(Util_Filter* filter, int32_t Input);
+extern int32_t Util_GetFilterState(Util_Filter* filter);
 
 extern int32_t Util_Limit(int32_t Input, int32_t Min, int32_t Max);
+extern int32_t Util_Abs(int32_t Input);
 #endif // __UTIL_H
