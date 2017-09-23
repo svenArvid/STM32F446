@@ -5,6 +5,11 @@
 
 #include <stdint.h>
 
+#ifdef  UNIT_TEST
+#include "UnitTestDefs.h"
+#else
+  #include "stm32f4xx_hal.h"
+#endif
 
 typedef uint8_t bool;
 

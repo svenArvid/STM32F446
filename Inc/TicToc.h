@@ -2,7 +2,7 @@
 #ifndef __TICTOC_H
 #define __TICTOC_H
 
-#include "stm32f4xx_hal.h"
+#include "ProjectDefs.h"
 #include "InputCapture.h"
 
 // Perform all TicToc measurements inside #ifdef TIC_TOC so that they are not done when undefining TIC_TOC

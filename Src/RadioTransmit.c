@@ -16,7 +16,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdlib.h>
 #include <string.h>
-#include "stm32f4xx_hal.h"
 #include "RadioTransmit.h"
 #include "Util.h"
 #include "Crc.h"
@@ -240,7 +239,7 @@ static void TSS320_MakeWaveform(const TSS320_MsgStruct *Msg)
   Util_BitWrite(Message, 19, Msg->Temperature < 0);
 
   /* Temperature, remaining 11 bits (remove sign bit) */
-  Message |= (uint32_t)(abs(Msg->Temperature) & 0x7FFF) << 8;
+  Message |= (uint32_t)(abs(Msg->Temperature) & 0x7FF) << 8;
   //Message |= (uint32_t)(RoomTempSnsr.ADCVal >> 4 ) << 8;
 
   /* Humidity, 8 least significant bits */
@@ -369,7 +368,8 @@ void RadioTransmit_100ms(void)
 /**
 * @brief  Period elapsed callback in non blocking mode
 * @note   This function is called  when TIM13 interrupt took place, inside
-* HAL_TIM_IRQHandler().
+* HAL_TIM_IRQHandler(). 
+  Note: Computation time can be reduced by NOT going via HAL IRQ function
 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {  

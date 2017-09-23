@@ -2,7 +2,6 @@
 #ifndef __NEO_PIXEL_H
 #define __NEO_PIXEL_H
 
-#include "stm32f4xx_hal.h"
 #include "ProjectDefs.h"
 
 #define NUM_LEDS  16

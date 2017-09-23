@@ -23,6 +23,8 @@
 #include "NeoPixel.h"
 #include "MotorDriver.h"
 #include "SpeedSensor.h"
+#include "RadioReceive.h"
+#include "FlashE2p.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -89,12 +91,13 @@ static void Main_Init(void)
   GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_7 | GPIO_PIN_14;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  Uart_Init();
+  FlashE2p_Init();
 
   InputCapture_Init();
   Pwm_Init();
   RadioTransmit_Init();
   Adc_Init();
-  Uart_Init();
   NeoPixel_Init();
 
   SpeedSensor_Init();
@@ -108,7 +111,6 @@ static void Loop1ms(void)
 
 static void Loop4ms(void)
 {
-  InputCapture_4ms();
   SpeedSensor_4ms();
 }
 
@@ -142,6 +144,10 @@ static void Loop100ms(void)
   RadioTransmit_100ms();
 
   NeoPixel_100ms();
+
+  RadioReceieve_100ms();
+
+  FlashE2p_100ms();
 }
 
 static void Loop500ms(void)

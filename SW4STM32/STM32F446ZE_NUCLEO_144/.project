@@ -111,6 +111,16 @@
 			<location>PARENT-4-PROJECT_LOC/STM32Cube_FW_F4_V1.14.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</location>
 		</link>
     <link>
+			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_flash.c</name>
+			<type>1</type>
+			<location>PARENT-4-PROJECT_LOC/STM32Cube_FW_F4_V1.14.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c</location>
+		</link>
+    <link>
+			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_flash_ex.c</name>
+			<type>1</type>
+			<location>PARENT-4-PROJECT_LOC/STM32Cube_FW_F4_V1.14.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c</location>
+		</link>
+    <link>
 			<name>Example/SW4STM32/startup_stm32f446xx.s</name>
 			<type>1</type>
 			<location>PARENT-1-PROJECT_LOC/startup_stm32f446xx.s</location>
@@ -179,6 +189,16 @@
 			<name>Example/User/SpeedSensor.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Src/SpeedSensor.c</location>
+		</link>
+    <link>
+			<name>Example/User/RadioReceive.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/Src/RadioReceive.c</location>
+		</link>
+    <link>
+			<name>Example/User/FlashE2p.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/Src/FlashE2p.c</location>
 		</link>
 		
 	</linkedResources>

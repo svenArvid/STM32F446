@@ -6,10 +6,10 @@
 * @date    27-July-2017
 * @brief   Device driver for motor H-driver SN754410.
 *          For one motor two non-inverting driver inputs and an Enable signal that enables these 2 channels are used.
-The two driver inputs are controlled with Pwm-signals and the Enable signal with a Digital output.
-SN754410 can driver two motors this way:
-Motor1 Pins: 1,2EN; 1A, 2A
-Motor2 Pins: 3,4EN; 3A, 4A
+*          The two driver inputs are controlled with Pwm-signals and the Enable signal with a Digital output.
+*          SN754410 can driver two motors this way:
+*          Motor1 Pins: 1,2EN; 1A, 2A
+*          Motor2 Pins: 3,4EN; 3A, 4A
 *
 ******************************************************************************
 */

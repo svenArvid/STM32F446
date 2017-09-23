@@ -10,6 +10,10 @@
     </ClCompile>
     <ClCompile Include="UnitTest_Crc.c" />
     <ClCompile Include="UnitTest_Util.c" />
+    <ClCompile Include="UnitTest_FlashE2p.c" />
+    <ClCompile Include="..\..\Src\FlashE2p.c">
+      <Filter>TestObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TestObjects">
@@ -18,5 +22,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UnitTest.h" />
+    <ClInclude Include="UnitTestDefs.h" />
   </ItemGroup>
 </Project>

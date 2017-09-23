@@ -176,3 +176,8 @@ int32_t Util_Abs(int32_t Input)
     return Input;
   }
 }
+
+bool Util_InRange(int32_t Input, int32_t LowerLim, int32_t UpperLim)
+{
+  return ( Input >= LowerLim  &&  Input <= UpperLim );
+}

@@ -38,20 +38,10 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
 #include "stm32f4xx_it.h"
 #include "RadioTransmit.h"
 #include "TicToc.h"
 #include "NeoPixel.h"
-
-
-/** @addtogroup STM32F4xx_HAL_Examples
-  * @{
-  */
-
-/** @addtogroup TIM_PWMOutput
-  * @{
-  */
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -190,4 +180,6 @@ void TIM8_UP_TIM13_IRQHandler(void)
 // NOTE: TIM8_TRG_COM_TIM14_IRQHandler is in NeoPixel.c
 // void TIM8_TRG_COM_TIM14_IRQHandler(void)
 
+
+// TIM5_IRQHandler  // Handled in RadioReceive.c
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

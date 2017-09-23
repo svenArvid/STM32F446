@@ -67,6 +67,10 @@ int main()
 
   UnitTest_Util_Map();
 
+  UnitTest_RadioReceive();
+
+  UnitTest_FlashE2p();
+
   UnitTest_TestCaseWrapper("TC_Util_SRLatch.txt", UnitTest_Util_SRLatch);
 
   UnitTest_TestCaseWrapper("TC_Util_FilterState.txt", UnitTest_Util_FilterState);

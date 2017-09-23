@@ -4,7 +4,7 @@
 * @author  Joakim Carlsson
 * @version V1.0
 * @date    23-Jan-2017
-* @brief   Use Timer 2 which is a 32-bit timer with 4 channels for Input Capture.
+* @brief   Use Timer 2 and Timer 5 which are 32-bit timers with 4 channels for Input Capture. For Timer 5 only use channel 1 and 4 because channel 2 and 3 are not connected to PCB. 
 *
 ******************************************************************************
 */
@@ -18,10 +18,11 @@
 
 /* Timer handler declaration */
 TIM_HandleTypeDef        Timer2Handle;
+TIM_HandleTypeDef        Timer5Handle;
 
 
 /**
-* @brief  This function configures the TIM2 as a time base source used for Input Capture and time measurement.
+* @brief  This function configures the TIM2 and TIM5 as a time base source used for Input Capture and time measurement.
 */
 void InputCapture_Init(void)
 {
@@ -36,6 +37,7 @@ void InputCapture_Init(void)
 
 
   /* Enable GPIO Clock */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /* Configure IO */
@@ -44,11 +46,17 @@ void InputCapture_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.Alternate = GPIO_AF1_TIM2;
 
-  GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11;
+  GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11;  // TIM2 uses Pins 8,9,10,11 on Port B 
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Alternate = GPIO_AF2_TIM5;
+  GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_3;  // TIM5 uses Pins 0,3 on Port A 
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
 
   /* Enable TIM2 clock */
   __HAL_RCC_TIM2_CLK_ENABLE();
+  __HAL_RCC_TIM5_CLK_ENABLE();
 
   /* Get clock configuration */
   HAL_RCC_GetClockConfig(&clkconfig, &pFLatency);
@@ -66,6 +74,7 @@ void InputCapture_Init(void)
     uwTimclock = 2 * HAL_RCC_GetPCLK1Freq();
   }
 
+  // ------ Setup Timer 2 ------
   /* Compute the prescaler value to have TIM2 counter clock equal to 10 MHz */
   uwPrescalerValue = (uint32_t)((uwTimclock / 10000000U) - 1U);
 
@@ -79,7 +88,7 @@ void InputCapture_Init(void)
 
   HAL_TIM_IC_Init(&Timer2Handle);
 
-  /* Configure the Input Capture channel */
+  /* Configure the Input Capture channels for Timer 2 */
   sConfig.ICPolarity = TIM_ICPOLARITY_RISING;     // Capture rising edges
   sConfig.ICSelection = TIM_ICSELECTION_DIRECTTI; 
   sConfig.ICFilter = 0xF;                        // f_sampling = f_DTS/32, N=8 i.e. 0.1*32*8 = 25.6 -> glitch filter is 25.6 us
@@ -97,6 +106,41 @@ void InputCapture_Init(void)
   HAL_TIM_IC_Start(&Timer2Handle, TIM_CHANNEL_2);
   HAL_TIM_IC_Start(&Timer2Handle, TIM_CHANNEL_3);
   HAL_TIM_IC_Start(&Timer2Handle, TIM_CHANNEL_4);
+
+  // ------ Timer 2 finished ------
+
+  // ------ Setup Timer 5 ------
+  /* Compute the prescaler value to have TIM5 counter clock equal to 100 KHz */
+  uwPrescalerValue = (uint32_t)((uwTimclock / 100000U) - 1U);
+
+  /* Initialize TIM5 */
+  Timer5Handle.Instance = TIM5;
+
+  Timer5Handle.Init.Period = 0xFFFFFFFF;
+  Timer5Handle.Init.Prescaler = uwPrescalerValue;
+  Timer5Handle.Init.ClockDivision = 0;
+  Timer5Handle.Init.CounterMode = TIM_COUNTERMODE_UP;
+
+  HAL_TIM_IC_Init(&Timer5Handle);
+
+  /* Configure the Input Capture channels for Timer 5 */
+  sConfig.ICPolarity = TIM_ICPOLARITY_BOTHEDGE;
+  sConfig.ICSelection = TIM_ICSELECTION_DIRECTTI;
+  sConfig.ICFilter = 0xF;                        // f_sampling = f_DTS/32, N=8 i.e. 1*16*16 = 256 -> glitch filter is 256 DTS (internal) clock cycles (think it is 90 MHz)
+  sConfig.ICPrescaler = TIM_ICPSC_DIV1;          // Capture performed each time an edge is detected on the capture input
+
+
+  HAL_TIM_IC_ConfigChannel(&Timer5Handle, &sConfig, TIM_CHANNEL_1);
+  HAL_TIM_IC_ConfigChannel(&Timer5Handle, &sConfig, TIM_CHANNEL_4);
+
+  /* Start Timer and Input Capture on channels 1 and 4 */
+  /*Configure the TIM5 IRQ priority */
+  HAL_NVIC_SetPriority(TIM5_IRQn, 13U, 0U);   // Interrupt prio number 13, i.e. low prio. 
+
+  HAL_NVIC_EnableIRQ(TIM5_IRQn);              // Enable the TIM5 global Interrupt
+
+  HAL_TIM_IC_Start_IT(&Timer5Handle, TIM_CHANNEL_1);
+  HAL_TIM_IC_Start(&Timer5Handle, TIM_CHANNEL_4);
 }
 
 
@@ -124,33 +168,3 @@ uint32_t InputCapture_ReadCCRx(TIM_TypeDef *TimInstance, uint32_t Channel)
 
   return RegisterVal;
 }
-
-void InputCapture_4ms(void)
-{
-  /*
-  int32_t StrLength;
-  int32_t PinStateA;
-  int32_t PinStateB;
-  uint32_t TimestampA = 0;
-  uint32_t TimestampB = 0;
-
-  PinStateA = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8);
-  PinStateB = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9);
-
-  if (Timer2Handle.Instance->SR & TIM_SR_CC1IF)
-  {
-    TimestampA = Timer2Handle.Instance->CCR1;
-  }
-  if (Timer2Handle.Instance->SR & TIM_SR_CC2IF)
-  {
-    TimestampB = Timer2Handle.Instance->CCR2;
-  }
-
-  StrLength = sprintf(USART3_TxBuff, "%ld,%ld,%lu,%lu,%lu,%lu\n", PinStateA, PinStateB, Timer2Handle.Instance->CNT, Timer2Handle.Instance->SR, TimestampA, TimestampB);
-
-  // Print to Terminal
-  HAL_UART_DMAStop(&USART3Handle);
-  HAL_UART_Transmit_DMA(&USART3Handle, USART3_TxBuff, StrLength);
-  */
-}
-

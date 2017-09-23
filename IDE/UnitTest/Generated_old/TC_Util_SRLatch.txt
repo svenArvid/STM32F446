@@ -1,0 +1,12 @@
+TC_Util_SRLatch
+SignalList:
+Set  Reset  latch.State  latch.Toggled
+--------------------------------------
+  0   0   0   0		// Init Values
+  1   0   1   1		// Set
+  1   0   1   0		// Inputs unchanged. state unchanged, thus Toggled is 0
+  0   0   1   0		// Inputs zero, state is latched
+  0   1   0   1		// Reset
+  0   0   0   0		// Inputs zero, state is latched
+  1   0   1   1		// Set
+  1   1   0   1		// Both inputs active, Reset dominates

@@ -2,7 +2,6 @@
 #ifndef __RADIO_TRANSMIT_H
 #define __RADIO_TRANSMIT_H
 
-#include "stm32f4xx_hal.h"
 #include "ProjectDefs.h"
 
 

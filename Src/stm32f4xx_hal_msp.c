@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    TIM/TIM_PWMOutput/Src/stm32f4xx_hal_msp.c
+  * @file    Src/stm32f4xx_hal_msp.c
   * @author  Joakim Carlsson
   * @version V1.0.2
   * @date    31-Dec-2016
-  * @brief   HAL MSP module.
+  * @brief   HAL MSP module.  
   ******************************************************************************
   */
 
@@ -21,9 +21,5 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-
-/**
-  * @}
-  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

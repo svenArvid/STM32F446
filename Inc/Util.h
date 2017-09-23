@@ -56,4 +56,6 @@ extern int32_t Util_GetFilterState(Util_Filter* filter);
 
 extern int32_t Util_Limit(int32_t Input, int32_t Min, int32_t Max);
 extern int32_t Util_Abs(int32_t Input);
+extern bool Util_InRange(int32_t Input, int32_t LowerLim, int32_t UpperLim);
+
 #endif // __UTIL_H

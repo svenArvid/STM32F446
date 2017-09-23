@@ -40,8 +40,7 @@
 #define __MAIN_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_hal.h"
-#include "stm32f4xx_nucleo_144.h"
+#include "ProjectDefs.h"
 
 
 /* Exported types ------------------------------------------------------------*/

@@ -1,0 +1,31 @@
+Port A:
+  Pin 0, 3  // InputCapture.c TIM5_CH1,CH4  Note: PA1,PA2 not available on PCB     
+  Pin 6     // RadioTransmit.c TIM13_CH1
+
+
+Port B: 
+
+  Pin 0,7,14     // main.c GPIO Output, (internal LEDs)
+  
+  Pin 4,5,1      // Pwm.c TIM3_CH1,2,4
+  
+  Pin 8,9,10,11  // InputCapture.c TIM2_CH1-4
+
+  
+Port C: 
+
+  Pin 0,3  // Adc.c  
+  
+  
+Port D:  
+  
+  Pin 8,9          // Uart.c USART3_TX/RX 
+  
+  Pin 12,13,14,15  // Pwm.c TIM4_CH1-4
+  
+  
+Port F:
+  
+  Pin 9  // NeoPixel.c TIM14_CH1
+  
+  Pin 12,13,14,15  // EJ IMPLEMENTERAT, GPIO Output

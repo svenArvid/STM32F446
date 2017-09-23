@@ -10,8 +10,7 @@
 */
 
 /* Includes ------------------------------------------------------------------*/
-//#include "ErrorHandler.h"
-//#include "ProjectDefs.h"
+#include <string.h>
 #include "Uart.h"
 #include "InputCapture.h"
 #include "SpeedSensor.h"
@@ -256,14 +255,14 @@ void SpeedSensor_20ms(void)
 {
   int32_t ShaftRotationDir = CheckShaftRotationDirection(&SensorIG53A, &SensorIG53B);
   int32_t SignOfShaftSpeed = SetOutputShaftSpeedSign(ShaftRotationDir);
-  int32_t StrLength;
+  //int32_t StrLength;
   
-  StrLength = sprintf(USART3_TxBuff, "%ld,%ld,%ld, %ld\n", 
-    Util_GetFilterState(&FilterRpm_SensorIG53A), Util_GetFilterState(&FilterRpm_SensorIG53B), ShaftRotationDir, Util_GetFilterState(&Filter_PhaseLag));
+  //StrLength = sprintf(USART3_TxBuff, "%ld,%ld,%ld, %ld\n", 
+  //  Util_GetFilterState(&FilterRpm_SensorIG53A), Util_GetFilterState(&FilterRpm_SensorIG53B), ShaftRotationDir, Util_GetFilterState(&Filter_PhaseLag));
 
   // Print to Terminal
-  HAL_UART_DMAStop(&USART3Handle);
-  HAL_UART_Transmit_DMA(&USART3Handle, USART3_TxBuff, StrLength);
+ // HAL_UART_DMAStop(&USART3Handle);
+ // HAL_UART_Transmit_DMA(&USART3Handle, USART3_TxBuff, StrLength);
 }
 
 /*
