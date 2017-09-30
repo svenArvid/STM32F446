@@ -97,16 +97,26 @@ static void Main_Init(void)
   InputCapture_Init();
   Pwm_Init();
   RadioTransmit_Init();
-  Adc_Init();
+  //Adc_Init();
   NeoPixel_Init();
 
   SpeedSensor_Init();
   MotorDriver_Init();
 }
 
+static Main_PrintToTerminal(void)
+{
+  FlashE2p_PrintToTerminal();
+  Uart_PrintToTerminal();
+
+  // Start transmission to Terminal
+  Uart_TransmitTerminalBuffer();
+}
+
 static void Loop1ms(void)
 {
   SpeedSensor_1ms();
+  Uart_1ms();
 }
 
 static void Loop4ms(void)
@@ -147,16 +157,18 @@ static void Loop100ms(void)
 
   RadioReceieve_100ms();
 
-  FlashE2p_100ms();
 }
 
 static void Loop500ms(void)
 {
-  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
+  //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
 
   Pwm_500ms();
 
   Adc_500ms();
+
+  FlashE2p_500ms();
+
 }
 
 /**
@@ -183,9 +195,10 @@ int main(void)
   
   Main_Init();
 
+  Main_PrintToTerminal();    // Should be executed immediately after initialization
   // Init functions finished
-  /* -3- Toggle IO in an infinite loop */
     
+
   while (1)
   {
     if (Pending4ms)

@@ -17,7 +17,6 @@
 #include "FlashE2p.h"
 #include "Util.h"
 #include "Uart.h"
-int32_t LogStrLength = 0;
 
 const tE2pDefault E2pDefault[E2P_NUM_PARAMETERS] =
 {
@@ -81,11 +80,33 @@ static HAL_StatusTypeDef FlashE2p_ProgramWord(FlashSector *pSector, uint16_t E2p
     FlashE2p_WriteSynchBit(E2pIndex, TRUE);
     
     pSector->NextWriteAddress += 4;
-
-    LogStrLength += sprintf(USART3_TxBuff + LogStrLength, "Stat: %d\n", FlashStatus);
   }
 
   return FlashStatus;
+}
+
+// Called in 500ms loop, checks if there are parameters that have been updated, i.e. Ram mirror is ahead of Eeprom. 
+// If so, those parameters are updated in Eeprom (copy Ram mirror value to Eeprom -> In synch). 
+static void FlashE2p_UpdateEeprom(FlashSector *pSector)
+{
+  uint32_t NumWords = sizeof(FlashE2p_InSynch) / sizeof(FlashE2p_InSynch[0]);
+  uint32_t BaseInd, E2pIndex;
+
+  for (int Word = 0; Word < NumWords; Word++)
+  {
+    if (FlashE2p_InSynch[Word] != 0xFFFFFFFF)
+    {
+      BaseInd = 32 * Word;
+      for (int Bit = 0; Bit < 32; Bit++)
+      {
+        E2pIndex = BaseInd + Bit;
+        if (!FlashE2p_ReadSynchBit(E2pIndex))
+        {
+          FlashE2p_ProgramWord(pSector, E2pIndex, FlashE2p_ReadMirror(E2pIndex));
+        }
+      }
+    }
+  }
 }
 
 void FlashE2p_InitSector(FlashSector *pSector)
@@ -157,7 +178,7 @@ void FlashE2p_InitSector(FlashSector *pSector)
       }
     }
 
-    LogStrLength = sprintf(USART3_TxBuff, "Copied Flash Eeprom to Ram mirror\n");
+    UART_PRINTF("Copied Flash Eeprom to Ram mirror\r\n");
   }
   else  // Memory not initialized properly. Use default parameters and initalize the Eeprom sector.
   {
@@ -182,9 +203,7 @@ void FlashE2p_InitSector(FlashSector *pSector)
       FlashE2p_WriteMirror(E2pIndex, DefaultVal);                           // Write default values to Ram mirror ...
       FlashStatus = FlashE2p_ProgramWord(pSector, E2pIndex, DefaultVal);  // and to the (erased) Flash Eeprom
     }
-
-    LogStrLength += sprintf(USART3_TxBuff + LogStrLength, "Default values written to Eeprom\n");
-
+    UART_PRINTF("Default values written to Eeprom\r\n");
   }
 }
 
@@ -200,40 +219,41 @@ void FlashE2p_Init(void)
   Sector3.SectorNum = FLASH_SECTOR_3;
 
   FlashE2p_InitSector(&Sector3);
+}
+
+// Print the parameters to Terminal
+void FlashE2p_PrintToTerminal(void)
+{
+  uint32_t indx;
+
+  UART_PRINTF("Ram mirror:\r\n");
   
-  LogStrLength += sprintf(USART3_TxBuff + LogStrLength, "Ram mirror:\n");
-  for (int i = 0; i < E2P_NUM_PARAMETERS; i++)
+  for (indx = 0; indx < E2P_NUM_PARAMETERS; indx++)
   {
-    LogStrLength += sprintf(USART3_TxBuff + LogStrLength, "%d\n", FlashE2p_ReadMirror(i));
+    UART_PRINTF("%d\r\n", FlashE2p_ReadMirror(indx));
   }
-  LogStrLength += sprintf(USART3_TxBuff + LogStrLength, "Flash:\n");
   
-  uint32_t i = Sector3.BaseAddress;
+  UART_PRINTF("Flash:\r\n");
+  indx = Sector3.BaseAddress;
   while (TRUE)
   {
-    LogStrLength += sprintf(USART3_TxBuff + LogStrLength, "%d, %d\n", (*(uint16_t*)i), (*(int16_t*)(i + 2)));
-    if (*(uint16_t*)i == 0xFFFF)
+    UART_PRINTF("%d, %d\r\n", (*(uint16_t*)indx), (*(int16_t*)(indx + 2)));
+    if (*(uint16_t*)indx == 0xFFFF)
     {
       break;
     }
-    i += 4;
+    indx += 4;
   }
- 
-  // Print to Terminal
-  HAL_UART_DMAStop(&USART3Handle);
-  HAL_UART_Transmit_DMA(&USART3Handle, USART3_TxBuff, LogStrLength);
-  LogStrLength = 0;
 }
 
-void FlashE2p_100ms(void)
+void FlashE2p_500ms(void)
 {
-  static bool DebugTest = FALSE;
+  // Debug Test
+  //FlashE2p_UpdateParameter(4, 850);
+  //FlashE2p_UpdateParameter(0, 147);
+  //FlashE2p_UpdateParameter(1, 654);
 
-  if (!DebugTest)
-  {
-    DebugTest = TRUE;
-    FlashE2p_ProgramWord(&Sector3, 3, 258);
-  }
+  //FlashE2p_UpdateEeprom(&Sector3);
 }
 
 // ====================================================
@@ -298,4 +318,16 @@ int16_t E2p_GetDefaultVal(tE2Index Index)
     return E2pDefault[Index].DefaultVal;
   }
   return 0;
+}
+
+// This function is used by application to change a parameter. 
+// Only do the update if the new value is different from what is already in Ram mirror, (minimize writes to Flash)
+// The Flash is NOT updated in this function, but since Synch bit is reset FlashE2p knows that it will need to update Flash (in 100ms loop) 
+void FlashE2p_UpdateParameter(tE2Index Index, int16_t Data)
+{
+  if (FlashE2p_ReadMirror(Index) != Data)
+  {
+    FlashE2p_WriteMirror(Index, Data);
+    FlashE2p_WriteSynchBit(Index, FALSE);
+  }
 }

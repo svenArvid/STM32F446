@@ -5,5 +5,6 @@
 
 #define __STATIC_INLINE static
 #define __weak
+#define ...
 
 #endif

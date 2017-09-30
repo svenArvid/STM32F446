@@ -29,3 +29,8 @@ Port F:
   Pin 9  // NeoPixel.c TIM14_CH1
   
   Pin 12,13,14,15  // EJ IMPLEMENTERAT, GPIO Output
+
+  
+Port G:
+
+  Pin 9,14         // Uart.c USART6_TX/RX  9 = RX, 14 = TX
