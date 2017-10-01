@@ -116,12 +116,12 @@ static Main_PrintToTerminal(void)
 static void Loop1ms(void)
 {
   SpeedSensor_1ms();
-  Uart_1ms();
 }
 
 static void Loop4ms(void)
 {
   SpeedSensor_4ms();
+  Uart_20ms();
 }
 
 static void Loop20ms(void)
@@ -141,6 +141,8 @@ static void Loop20ms(void)
   SpeedSensor_20ms();
 
   MotorDriver_20ms();
+
+  Uart_20ms();
 
 #ifdef TIC_TOC
   TicToc_20ms();

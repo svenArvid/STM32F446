@@ -22,7 +22,6 @@
 
 /* UART handler declaration */
 UART_HandleTypeDef USART3Handle;
-UART_HandleTypeDef USART6Handle;
 
 /* Buffers */
 uint8_t USART3_TxBuff[USART3_BUFF_SIZE] = { 0 };
@@ -33,17 +32,64 @@ uint8_t USART6_RxBuff[USART6_BUFF_SIZE] = { 0 };
 
 uint16_t USART3_TxBuffIndex = 0;
 
+UartPort ModbusPort;
+
 static void Uart_InitHW(void);
+
+static void DMA_ClearAllFlags(DMA_Stream_TypeDef *DmaStream)
+{
+  volatile uint32_t *Register;
+
+  if (DmaStream >= DMA2_Stream4)
+  {
+    Register = &(DMA2->HIFCR);
+  }
+  else if (DmaStream >= DMA2_Stream0)
+  {
+    Register = &(DMA2->LIFCR);
+  }
+  else if (DmaStream >= DMA1_Stream4)
+  {
+    Register = &(DMA1->HIFCR);
+  }
+  else {
+    Register = &(DMA1->LIFCR);
+  }
+
+  switch ((uint32_t)DmaStream)
+  {
+  case (uint32_t)DMA1_Stream0:
+  case (uint32_t)DMA2_Stream0:
+  case (uint32_t)DMA1_Stream4:
+  case (uint32_t)DMA2_Stream4:
+    *Register = (DMA_FLAG_TCIF0_4 | DMA_FLAG_HTIF0_4 | DMA_FLAG_TEIF0_4 | DMA_FLAG_DMEIF0_4 | DMA_FLAG_FEIF0_4);
+    break;
+  case (uint32_t)DMA1_Stream1:
+  case (uint32_t)DMA2_Stream1:
+  case (uint32_t)DMA1_Stream5:
+  case (uint32_t)DMA2_Stream5:
+    *Register = (DMA_FLAG_TCIF1_5 | DMA_FLAG_HTIF1_5 | DMA_FLAG_TEIF1_5 | DMA_FLAG_DMEIF1_5 | DMA_FLAG_FEIF1_5);
+    break;
+  case (uint32_t)DMA1_Stream2:
+  case (uint32_t)DMA2_Stream2:
+  case (uint32_t)DMA1_Stream6:
+  case (uint32_t)DMA2_Stream6:
+    *Register = (DMA_FLAG_TCIF2_6 | DMA_FLAG_HTIF2_6 | DMA_FLAG_TEIF2_6 | DMA_FLAG_DMEIF2_6 | DMA_FLAG_FEIF2_6);
+    break;
+  case (uint32_t)DMA1_Stream3:
+  case (uint32_t)DMA2_Stream3:
+  case (uint32_t)DMA1_Stream7:
+  case (uint32_t)DMA2_Stream7:
+    *Register = (DMA_FLAG_TCIF3_7 | DMA_FLAG_HTIF3_7 | DMA_FLAG_TEIF3_7 | DMA_FLAG_DMEIF3_7 | DMA_FLAG_FEIF3_7);
+    break;
+  }
+}
 
 void Uart_Init(void)
 {
   /*##-1- Configure the U(S)ART peripheral ######################################*/
   /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
   
-  /* UART configured as follows:
-  - Word Length = 8 Bits (7 data bit + 1 parity bit) :
-  BE CAREFUL : Program 7 data bits + 1 parity bit in PC HyperTerminal
-  - Hardware flow control disabled (RTS and CTS signals) */
   USART3Handle.Instance = USART3;
   USART3Handle.Init.BaudRate = 115200;
   USART3Handle.Init.WordLength = UART_WORDLENGTH_8B;
@@ -53,32 +99,21 @@ void Uart_Init(void)
   USART3Handle.Init.Mode = UART_MODE_TX;
   USART3Handle.Init.OverSampling = UART_OVERSAMPLING_16;
 
-  USART6Handle.Instance = USART6;
-  USART6Handle.Init.BaudRate = 9600;
-  USART6Handle.Init.WordLength = UART_WORDLENGTH_8B;
-  USART6Handle.Init.StopBits = UART_STOPBITS_1;
-  USART6Handle.Init.Parity = UART_PARITY_NONE;
-  USART6Handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  USART6Handle.Init.Mode = UART_MODE_RX;
-  USART6Handle.Init.OverSampling = UART_OVERSAMPLING_16;
-   
+  ModbusPort.Rx.Buffer = USART6_RxBuff;
+  ModbusPort.Rx.ByteCount = 0;
+  ModbusPort.Rx.Size = USART6_BUFF_SIZE;
+  ModbusPort.Tx.Buffer = USART6_TxBuff;
+  ModbusPort.Tx.ByteCount = 0;
+  ModbusPort.Tx.Size = USART6_BUFF_SIZE;
+
   Uart_InitHW();
   
   if (HAL_UART_Init(&USART3Handle) != HAL_OK) { // Initialization Error 
     Error_Handler(); 
   }
   
-  if (HAL_UART_Init(&USART6Handle) != HAL_OK) { // Initialization Error
-    Error_Handler();
-  }
-  
   //(void)HAL_HalfDuplex_Init(&USART3Handle);
 
-
-  HAL_UART_Receive_DMA(&USART6Handle, USART6_RxBuff, USART6_BUFF_SIZE);    // Start receiver
-  //__HAL_DMA_ENABLE(USART6Handle.hdmarx);
-
-  //HAL_UART_Receive(&USART3Handle, USART3_RxBuff, USART3_BUFF_SIZE,100);
 }
 
 /**
@@ -95,9 +130,6 @@ static void Uart_InitHW(void)
   GPIO_InitTypeDef  GPIO_InitStruct;
 
   static DMA_HandleTypeDef  hdmatx_usart3;
-  //static DMA_HandleTypeDef  hdmarx_usart3;
-  //static DMA_HandleTypeDef  hdmatx_usart6;
-  static DMA_HandleTypeDef  hdmarx_usart6;
 
   /*##-1- Enable peripherals and GPIO Clocks #################################*/
   /* Enable GPIO TX/RX clock */
@@ -130,8 +162,31 @@ static void Uart_InitHW(void)
   GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_14;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-  
-  //##-3a- Configure the DMA stream for USART3 TX ##########################################
+  //##-3- Configure ModbusPort Port: USART 6, Rx using DMA2 Stream 1 (channel 5) ##########################################
+  uint32_t BaudRate = 9600;
+
+  ModbusPort.Usart = USART6;
+  ModbusPort.DMAStream_Rx = DMA2_Stream1;
+
+  ModbusPort.Usart->BRR = UART_BRR_SAMPLING16(HAL_RCC_GetPCLK2Freq(), BaudRate);  // USART6 uses APB2 bus
+  ModbusPort.Usart->CR2 = 0x0;
+  ModbusPort.Usart->CR3 = USART_CR3_DMAR; /* | USART_CR3_EIE */
+  ModbusPort.Usart->CR1 = USART_CR1_UE | USART_CR1_RE; /* | USART_CR1_TE */
+  // Reg. GTPR  Keep at reset val
+
+  ModbusPort.DMAStream_Rx->CR &= ~DMA_SxCR_EN;      // Make sure stream is disabled before writing to it's registers
+  DMA_ClearAllFlags(ModbusPort.DMAStream_Rx);
+
+  ModbusPort.DMAStream_Rx->PAR = (uint32_t)&USART6->DR;
+  ModbusPort.DMAStream_Rx->M0AR = (uint32_t)USART6_RxBuff;
+  ModbusPort.DMAStream_Rx->NDTR = USART6_BUFF_SIZE;
+  // Reg. M1AR   Not used
+  // Reg. FCR    Keep at reset val
+  ModbusPort.DMAStream_Rx->CR = DMA_CHANNEL_5 | DMA_PRIORITY_VERY_HIGH | DMA_MINC_ENABLE /*| DMA_IT_TC | DMA_IT_TE | DMA_IT_DME*/;
+
+  ModbusPort.DMAStream_Rx->CR |= DMA_SxCR_EN;    // Enable stream    
+
+  //##-4a- Configure the DMA stream for USART3 TX ##########################################
   hdmatx_usart3.Instance = DMA1_Stream3;
   hdmatx_usart3.Init.Channel = DMA_CHANNEL_4;          // USART3_TX is on stream 3, channel 4
   hdmatx_usart3.Init.Direction = DMA_MEMORY_TO_PERIPH;
@@ -152,7 +207,7 @@ static void Uart_InitHW(void)
   __HAL_LINKDMA(&USART3Handle, hdmatx, hdmatx_usart3);
 
   /*
-  //##-3b- Configure the DMA stream for USART3 RX ##########################################
+  //##-4b- Configure the DMA stream for USART3 RX ##########################################
   hdmarx_usart3.Instance = DMA1_Stream1;
   hdmarx_usart3.Init.Channel = DMA_CHANNEL_4;          // USART3_RX is on stream 1, channel 4
   hdmarx_usart3.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -172,102 +227,59 @@ static void Uart_InitHW(void)
   // Associate the initialized DMA handle to the Usart handle 
   __HAL_LINKDMA(&USART3Handle, hdmarx, hdmarx_usart3);
   */
-  /*
-  //##-3c- Configure the DMA stream for USART6 TX ##########################################
-  hdmatx_usart6.Instance = DMA2_Stream7;
-  hdmatx_usart6.Init.Channel = DMA_CHANNEL_5;
-  hdmatx_usart6.Init.Direction = DMA_MEMORY_TO_PERIPH;
-  hdmatx_usart6.Init.PeriphInc = DMA_PINC_DISABLE;
-  hdmatx_usart6.Init.MemInc = DMA_MINC_ENABLE;
-  hdmatx_usart6.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-  //hdmatx_usart6.Init.MemDataAlignment = DMA_MDATAALIGN_WORD; // In Direct mode source and destination data widths are equal and defined by PSIZE
-  hdmatx_usart6.Init.Mode = DMA_NORMAL;  
-  hdmatx_usart6.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-  hdmatx_usart6.Init.FIFOMode = DMA_FIFOMODE_DISABLE;            // i.e. Direct mode 
-  hdmatx_usart6.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_HALFFULL; // Dont think this matters since Direct Mode is used
-  hdmatx_usart6.Init.MemBurst = DMA_MBURST_SINGLE;               // Burst transfers are not possible in Direct mode
-  hdmatx_usart6.Init.PeriphBurst = DMA_PBURST_SINGLE;
-
-  HAL_DMA_Init(&hdmatx_usart6);
-
-  // Associate the initialized DMA handle to the Usart handle 
-  __HAL_LINKDMA(&USART6Handle, hdmatx, hdmatx_usart6);
-  */
-  //##-3d- Configure the DMA stream for USART6 RX ##########################################
-  hdmarx_usart6.Instance = DMA2_Stream1;
-  hdmarx_usart6.Init.Channel = DMA_CHANNEL_5;
-  hdmarx_usart6.Init.Direction = DMA_PERIPH_TO_MEMORY;
-  hdmarx_usart6.Init.PeriphInc = DMA_PINC_DISABLE;
-  hdmarx_usart6.Init.MemInc = DMA_MINC_ENABLE;
-  hdmarx_usart6.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-  //hdmarx_usart6.Init.MemDataAlignment = DMA_MDATAALIGN_WORD; // In Direct mode source and destination data widths are equal and defined by PSIZE
-  hdmarx_usart6.Init.Mode = DMA_NORMAL;
-  hdmarx_usart6.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-  hdmarx_usart6.Init.FIFOMode = DMA_FIFOMODE_DISABLE;            // i.e. Direct mode 
-  hdmarx_usart6.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_HALFFULL; // Dont think this matters since Direct Mode is used
-  hdmarx_usart6.Init.MemBurst = DMA_MBURST_SINGLE;               // Burst transfers are not possible in Direct mode
-  hdmarx_usart6.Init.PeriphBurst = DMA_PBURST_SINGLE;
-
-  HAL_DMA_Init(&hdmarx_usart6);
-
-  // Associate the initialized DMA handle to the Usart handle 
-  __HAL_LINKDMA(&USART6Handle, hdmarx, hdmarx_usart6);
 }
 
-static void Uart_PollReceiver(UART_HandleTypeDef *huart)
+// Checks if a message has been received (by testing IDLE LINE Flag) and if so returns the number of bytes received
+uint16_t Uart_MessageReceived(UartPort *Port)
 {
-  static index = 0;
-  /*
-  if (__HAL_UART_GET_FLAG(huart, UART_FLAG_RXNE))
+  uint16_t BytesReceived = 0;
+
+  if (Port->Usart->SR & USART_SR_IDLE)
   {
-    USART6_RxBuff[index++] = huart->Instance->DR;
+    uint32_t TempReg = USART6->DR;                    // To clear IDLE LINE FLAG
+    BytesReceived = Port->Rx.Size - Port->DMAStream_Rx->NDTR;
   }
-  else if (index > 0)
+
+  return BytesReceived;
+}
+
+// Disables DMA Rx stream and Receiver
+void Uart_StopReceiver(UartPort *Port)
+{
+  Port->DMAStream_Rx->CR &= ~DMA_SxCR_EN;   
+  DMA_ClearAllFlags(Port->DMAStream_Rx);
+
+  Port->Usart->CR3 &= ~USART_CR3_DMAR;
+  Port->Usart->CR1 &= ~USART_CR1_RE;
+}
+
+// (Re)starts the Receiver and DMA stream
+void Uart_StartReceiver(UartPort *Port)
+{
+  Port->DMAStream_Rx->CR &= ~DMA_SxCR_EN;        // Must disable stream before writing to it's registers
+  DMA_ClearAllFlags(Port->DMAStream_Rx);
+  Port->DMAStream_Rx->NDTR = Port->Rx.Size;      // Reload to full size
+  
+  Port->Usart->CR1 |= USART_CR1_RE;
+  Port->Usart->CR3 |= USART_CR3_DMAR;
+  
+  Port->DMAStream_Rx->CR |= DMA_SxCR_EN;        // Enable stream
+}
+
+static void Uart_TestUart(void)
+{
+  ModbusPort.Rx.ByteCount = Uart_MessageReceived(&ModbusPort);
+
+  if(ModbusPort.Rx.ByteCount > 0)
   {
-    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
+    Uart_StartReceiver(&ModbusPort);
 
-    // Print to Terminal
-    for (int i = 0; i < index; i++)
-    {
-      LogStrLength += sprintf(USART3_TxBuff + LogStrLength, "%d", USART6_RxBuff[i]);
-    }
-    LogStrLength += sprintf(USART3_TxBuff + LogStrLength, "\n%d\n", huart->hdmarx->Instance->NDTR);
-    LogStrLength += sprintf(USART3_TxBuff + LogStrLength, "%X\n", huart->hdmarx->Instance->CR);
-    LogStrLength += sprintf(USART3_TxBuff + LogStrLength, "%X\n", huart->hdmarx->Instance->PAR);
-    LogStrLength += sprintf(USART3_TxBuff + LogStrLength, "%X\n", huart->hdmarx->Instance->FCR);
-    if (LogStrLength > 0)
-    {
-      if (__HAL_UART_GET_FLAG(&USART3Handle, UART_FLAG_TC))    // Check if Transmission is complete
-      {
-        USART3Handle.gState = HAL_UART_STATE_READY;
-        USART3Handle.hdmatx->State = HAL_DMA_STATE_READY;
-        __HAL_UNLOCK(USART3Handle.hdmatx);
-        HAL_UART_Transmit_DMA(&USART3Handle, USART3_TxBuff, LogStrLength);
-        LogStrLength = 0;
-      }
-    }
-    index = 0;
-  }
-  */
-
-  if(__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) 
-  {
-    uint32_t Temp = USART6->DR;    // To clear IDLE LINE FLAG
-    int BytesReceived = huart->RxXferSize - huart->hdmarx->Instance->NDTR;
-
-    __HAL_DMA_DISABLE(huart->hdmarx);                       // Must disable stream before writing to it's registers
-
-    huart->hdmarx->Instance->NDTR = huart->RxXferSize;      // Reset to full size
-    //DMA2->LIFCR = 0x3DU << 6;                               // Clear DMA Interrupt flags for Stream 1
-    DMA2->LIFCR = DMA_FLAG_TCIF1_5 | DMA_FLAG_HTIF1_5 | DMA_FLAG_TEIF1_5 | DMA_FLAG_DMEIF1_5 | DMA_FLAG_FEIF1_5;
-
-    __HAL_DMA_ENABLE(huart->hdmarx);
     // Check message
     Uart_PrintToTerminal();
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
 
     // Print to Terminal
-    for (int i = 0; i < BytesReceived; i++)
+    for (int i = 0; i < ModbusPort.Rx.ByteCount; i++)
     {
       UART_PRINTF("%X", USART6_RxBuff[i]);
     }
@@ -275,10 +287,10 @@ static void Uart_PollReceiver(UART_HandleTypeDef *huart)
   }
 }
 
-void Uart_1ms(void)
+void Uart_20ms(void)
 {
   // Check Receiver
-  Uart_PollReceiver(&USART6Handle);
+  Uart_TestUart();
 }
 
 void Uart_PrintToTerminal(void)
@@ -292,10 +304,11 @@ void Uart_PrintToTerminal(void)
   UART_PRINTF("CR3: %X\r\n", USART6->CR3);
   
   UART_PRINTF("\r\nDMA2 Stream 1 Channel 5 (USART6 Rx):\r\n");
-  UART_PRINTF("NDTR: %d\r\n", USART6Handle.hdmarx->Instance->NDTR);
-  UART_PRINTF("CR:  %X\r\n", USART6Handle.hdmarx->Instance->CR);
-  UART_PRINTF("PAR: %X\r\n", USART6Handle.hdmarx->Instance->PAR);
-  UART_PRINTF("FCR: %X\r\n", USART6Handle.hdmarx->Instance->FCR);
+  UART_PRINTF("NDTR: %d\r\n", DMA2_Stream1->NDTR);
+  UART_PRINTF("CR:   %X\r\n", DMA2_Stream1->CR);
+  UART_PRINTF("PAR:  %X\r\n", DMA2_Stream1->PAR);
+  UART_PRINTF("M0AR: %X\r\n", DMA2_Stream1->M0AR);
+  UART_PRINTF("FCR:  %X\r\n", DMA2_Stream1->FCR);
 
   UART_PRINTF("\nDMA2 Common:\r\n");
   UART_PRINTF("LISR:  %X\r\n", DMA2->LISR);
