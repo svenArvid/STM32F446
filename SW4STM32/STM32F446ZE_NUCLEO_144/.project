@@ -200,6 +200,10 @@
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Src/FlashE2p.c</location>
 		</link>
-		
+		<link>
+			<name>Example/User/Modbus.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/Src/Modbus.c</location>
+		</link>
 	</linkedResources>
 </projectDescription>

@@ -234,6 +234,7 @@
     <ClCompile Include="..\Src\FlashE2p.c" />
     <ClCompile Include="..\Src\InputCapture.c" />
     <ClCompile Include="..\Src\main.c" />
+    <ClCompile Include="..\Src\Modbus.c" />
     <ClCompile Include="..\Src\MotorDriver.c" />
     <ClCompile Include="..\Src\NeoPixel.c" />
     <ClCompile Include="..\Src\Pwm.c" />
@@ -255,6 +256,7 @@
     <ClInclude Include="..\Inc\FlashE2p.h" />
     <ClInclude Include="..\Inc\InputCapture.h" />
     <ClInclude Include="..\Inc\main.h" />
+    <ClInclude Include="..\Inc\Modbus.h" />
     <ClInclude Include="..\Inc\MotorDriver.h" />
     <ClInclude Include="..\Inc\NeoPixel.h" />
     <ClInclude Include="..\Inc\ProjectDefs.h" />

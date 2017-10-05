@@ -25,6 +25,7 @@
 #include "SpeedSensor.h"
 #include "RadioReceive.h"
 #include "FlashE2p.h"
+#include "Modbus.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -121,7 +122,7 @@ static void Loop1ms(void)
 static void Loop4ms(void)
 {
   SpeedSensor_4ms();
-  Uart_20ms();
+  Modbus_4ms();
 }
 
 static void Loop20ms(void)
@@ -169,8 +170,7 @@ static void Loop500ms(void)
 
   Adc_500ms();
 
-  FlashE2p_500ms();
-
+  Uart_TransmitTerminalBuffer();
 }
 
 /**
