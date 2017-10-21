@@ -22,7 +22,8 @@
 
 #define MODBUS_TIMEOUT    100
 
-#define READ_E2P 1
+#define READ_E2P   1
+#define WRITE_E2P  1
 
 static uint8_t Modbus_Address = 0xA;
 static uint8_t Modbus_FunctionCode = 0;
@@ -37,7 +38,6 @@ static bool Modbus_ValidRequest(uint16_t BytesReceived)
 {
   uint16_t ComputedCrc, MessageCrc;
   bool Result = FALSE;
-  uint8_t MessageFunctionCode;
 
   ComputedCrc = Crc_CalcCrc16(ModbusPort.Rx.Buffer, BytesReceived - 2);
   MessageCrc  = ((uint16_t)ModbusPort.Rx.Buffer[BytesReceived - 1]) << 8;  // Note: The high and low byte of CRC shall be swapped in Modbus protocol 
@@ -79,6 +79,8 @@ static uint16_t Modbus_ServeRequest(void)
   uint16_t NumRegisters = 0;
   int16_t TempInt;
   int16_t(*pReadFunc)() = NULL;
+  void (*pWriteFunc)()  = NULL;
+
   uint16_t WriteIndx = 0;
   uint16_t ReadIndx  = 0;
   
@@ -86,7 +88,7 @@ static uint16_t Modbus_ServeRequest(void)
   ModbusPort.Tx.Buffer[0] = Modbus_Address;       // All responses start with address and Function code
   ModbusPort.Tx.Buffer[1] = Modbus_FunctionCode;
 
-  FirstAddress = (ModbusPort.Rx.Buffer[2] << 8) | ModbusPort.Rx.Buffer[3];  // Note: All Function codes send address of first register at this location
+  FirstAddress = (ModbusPort.Rx.Buffer[2] << 8) | ModbusPort.Rx.Buffer[3];  // Note: All Function code requests send address of first register at this location
 
   if (Modbus_FunctionCode == 4)
   {
@@ -116,7 +118,26 @@ static uint16_t Modbus_ServeRequest(void)
   }
   else if (Modbus_FunctionCode == 6)
   {
-    ;
+    switch (FirstAddress / 0x1000)
+    {
+    case WRITE_E2P:
+      UART_PRINTF("case WRITE_E2P\r\n");
+      pWriteFunc = FlashE2p_UpdateParameter;
+      pReadFunc  = FlashE2p_ReadMirror;
+      break;
+    default:
+      UART_PRINTF("default\r\n");
+      return 0;  // This can happen if an illegal address is requested, thus we return 0 here and no response will be sent
+    }
+
+    pWriteFunc(FirstAddress % 0x1000, (ModbusPort.Rx.Buffer[4] << 8) | ModbusPort.Rx.Buffer[5]);  // Write received data on given address
+    TempInt = pReadFunc(FirstAddress % 0x1000);
+    
+    ModbusPort.Tx.Buffer[2] = (uint8_t)(FirstAddress >> 8);    // FC 6: If register address is within limits the response will be an echo of the request
+    ModbusPort.Tx.Buffer[3] = (uint8_t)FirstAddress;
+    ModbusPort.Tx.Buffer[4] = (uint8_t)(TempInt >> 8);
+    ModbusPort.Tx.Buffer[5] = (uint8_t)TempInt;
+    WriteIndx = 6;
   }
 
   // All responses end with Crc

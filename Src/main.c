@@ -170,6 +170,8 @@ static void Loop500ms(void)
 
   Adc_500ms();
 
+  FlashE2p_500ms();
+
   Uart_TransmitTerminalBuffer();
 }
 

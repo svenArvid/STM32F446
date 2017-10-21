@@ -248,12 +248,7 @@ void FlashE2p_PrintToTerminal(void)
 
 void FlashE2p_500ms(void)
 {
-  // Debug Test
-  //FlashE2p_UpdateParameter(4, 850);
-  //FlashE2p_UpdateParameter(0, 147);
-  //FlashE2p_UpdateParameter(1, 654);
-
-  //FlashE2p_UpdateEeprom(&Sector3);
+  FlashE2p_UpdateEeprom(&Sector3);
 }
 
 // ====================================================

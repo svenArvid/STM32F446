@@ -1,0 +1,13 @@
+
+IDE/.vs/
+IDE/Debug/
+IDE/Nucleo_446ZE.opensdf
+IDE/Nucleo_446ZE.sdf
+IDE/Nucleo_446ZE.vcxproj.user
+IDE/UnitTest/Debug/
+IDE/UnitTest/UnitTest.vcxproj.user
+IDE/UnitTest/x64/
+IDE/x64/
+SW4STM32/.metadata/
+SW4STM32/STM32F446ZE_NUCLEO_144/.settings/
+SW4STM32/STM32F446ZE_NUCLEO_144/Debug/
