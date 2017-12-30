@@ -231,6 +231,7 @@
     <ClCompile Include="..\Src\Adc.c" />
     <ClCompile Include="..\Src\Crc.c" />
     <ClCompile Include="..\Src\ErrorHandler.c" />
+    <ClCompile Include="..\Src\ExportedSignals.c" />
     <ClCompile Include="..\Src\FlashE2p.c" />
     <ClCompile Include="..\Src\InputCapture.c" />
     <ClCompile Include="..\Src\main.c" />
@@ -253,6 +254,7 @@
     <ClInclude Include="..\Inc\Adc.h" />
     <ClInclude Include="..\Inc\Crc.h" />
     <ClInclude Include="..\Inc\ErrorHandler.h" />
+    <ClInclude Include="..\Inc\ExportedSignals.h" />
     <ClInclude Include="..\Inc\FlashE2p.h" />
     <ClInclude Include="..\Inc\InputCapture.h" />
     <ClInclude Include="..\Inc\main.h" />

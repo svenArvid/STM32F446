@@ -12,6 +12,7 @@
 #define TIMER_CLOCK_FREQ  10000000
 #define PULSES_PER_REV    3
 #define GEAR_RATIO        100 / 5273    // ratio is 52.73, thus multiply with 100 and THEN divide by 5273, hence no parenthesises
+
 typedef struct {		
   volatile TIM_TypeDef  *TimInstance;     // Timer Register base address 
   volatile uint16_t Channel;
@@ -39,6 +40,14 @@ enum RotationDirection
 
 extern ShaftSpeedSensor SensorIG53A;
 extern ShaftSpeedSensor SensorIG53B;
+
+extern int16_t SensorIG53A_Rpm;
+extern int16_t SensorIG53B_Rpm;
+extern int16_t SensorIG53A_RpmFild;
+extern int16_t SensorIG53B_RpmFild;
+extern int16_t SensorM5_Rpm;
+extern int16_t SensorM5_RpmFild;
+
 
 extern void SpeedSensor_Init(void);
 extern void SpeedSensor_1ms(void);

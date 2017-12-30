@@ -17,6 +17,7 @@
 
 ShaftSpeedSensor SensorIG53A;     
 ShaftSpeedSensor SensorIG53B;
+ShaftSpeedSensor SensorM5;
 
 //-----------------------------------------------------------
 void SpeedSensor_Init()  
@@ -30,6 +31,11 @@ void SpeedSensor_Init()
   SensorIG53B.TimInstance = TIM2;
   SensorIG53B.Channel = TIM_CHANNEL_2;
   SensorIG53B.Tim_SR_CCxIF = TIM_SR_CC2IF;
+
+  (void)memset(&SensorM5, 0, sizeof(ShaftSpeedSensor));
+  SensorM5.TimInstance = TIM2;
+  SensorM5.Channel = TIM_CHANNEL_3;
+  SensorM5.Tim_SR_CCxIF = TIM_SR_CC3IF;
 }
 
 
@@ -69,30 +75,45 @@ void SpeedSensor_1ms()
 {
  UpdatePeriod(&SensorIG53A);
  UpdatePeriod(&SensorIG53B);
+
+ UpdatePeriod(&SensorM5);
 }
 
 // Compute Rpm based on Pulse period for a speed sensor.
 // Note that Period = 0 has special meaning (No pulses have been captured for a while) -> Rpm shall be 0
-static int ComputeShaftRpm(const ShaftSpeedSensor *Snsr) 
+static int16_t ComputeShaftRpm(const ShaftSpeedSensor *Snsr) 
 {
 	uint32_t MotorRpm;  // Speed before gearbox
   uint32_t ShaftRpm;  // Speed after gearbox
-  uint32_t Period = Snsr->Period;
 
-  if (MIN_PERIOD < Period && Period < MAX_PERIOD)
+  if (MIN_PERIOD < Snsr->Period && Snsr->Period < MAX_PERIOD)
 	{
-    MotorRpm = TIMER_CLOCK_FREQ * 60 / Period / PULSES_PER_REV;
+    MotorRpm = TIMER_CLOCK_FREQ * 60 / Snsr->Period / PULSES_PER_REV;
     ShaftRpm = MotorRpm * GEAR_RATIO;	
 	}
 	else 
 	{
     ShaftRpm = 0;
 	}
-  return ShaftRpm;
+  return (int16_t)ShaftRpm;
 }
 
+static int16_t ComputeRobotMotorRpm(const ShaftSpeedSensor *Snsr)
+{
+  uint32_t MotorRpm;  // Speed before gearbox
+  
+  if (MIN_PERIOD < Snsr->Period && Snsr->Period < MAX_PERIOD)
+  {
+    MotorRpm = TIMER_CLOCK_FREQ * 60 / Snsr->Period / 2;  // 2 white->black transitions per revolution
+  }
+  else
+  {
+    MotorRpm = 0;
+  }
+  return (int16_t)MotorRpm;
+}
 
-Util_Filter Filter_PhaseLag = { 75, 10 };    // Very fast LP-filter which removes the speed sensor noise but the lag is very low. Initiate to 45 degrees (in the middle)
+Util_Filter Filter_PhaseLag = { 75, 10 };    // Very fast LP-filter which removes the speed sensor noise but the lag is very low. Initiate to 75 degrees (in the middle)
 
 // Computes phase lag between 2 shaft speed sensors and from that determines rotation direction
 static enum RotationDirection CheckShaftRotationDirection(const ShaftSpeedSensor *Snsr1, const ShaftSpeedSensor *Snsr2)
@@ -241,28 +262,32 @@ static void Freq_InputShaftFaultHandling(sint SensorDi14Rpm)
 
 Util_Filter FilterRpm_SensorIG53A = { 0, 10 };
 Util_Filter FilterRpm_SensorIG53B = { 0, 10 };
+Util_Filter FilterRpm_SensorM5    = { 0, 5 };
+
+int16_t SensorIG53A_Rpm;
+int16_t SensorIG53B_Rpm;
+int16_t SensorIG53A_RpmFild;
+int16_t SensorIG53B_RpmFild;
+
+int16_t SensorM5_Rpm;
+int16_t SensorM5_RpmFild;
 
 void SpeedSensor_4ms(void)
 {
-  int32_t SensorIG53A_Rpm = ComputeShaftRpm(&SensorIG53A);
-  int32_t SensorIG53B_Rpm = ComputeShaftRpm(&SensorIG53B);
+  SensorIG53A_Rpm = ComputeShaftRpm(&SensorIG53A);
+  SensorIG53B_Rpm = ComputeShaftRpm(&SensorIG53B);
  
-  Util_FilterState(&FilterRpm_SensorIG53A, SensorIG53A_Rpm);
-  Util_FilterState(&FilterRpm_SensorIG53B, SensorIG53B_Rpm);
+  SensorIG53A_RpmFild = Util_FilterState(&FilterRpm_SensorIG53A, SensorIG53A_Rpm);
+  SensorIG53B_RpmFild = Util_FilterState(&FilterRpm_SensorIG53B, SensorIG53B_Rpm);
 }
 
 void SpeedSensor_20ms(void)
 {
   int32_t ShaftRotationDir = CheckShaftRotationDirection(&SensorIG53A, &SensorIG53B);
   int32_t SignOfShaftSpeed = SetOutputShaftSpeedSign(ShaftRotationDir);
-  //int32_t StrLength;
-  
-  //StrLength = sprintf(USART3_TxBuff, "%ld,%ld,%ld, %ld\n", 
-  //  Util_GetFilterState(&FilterRpm_SensorIG53A), Util_GetFilterState(&FilterRpm_SensorIG53B), ShaftRotationDir, Util_GetFilterState(&Filter_PhaseLag));
 
-  // Print to Terminal
- // HAL_UART_DMAStop(&USART3Handle);
- // HAL_UART_Transmit_DMA(&USART3Handle, USART3_TxBuff, StrLength);
+  SensorM5_Rpm = ComputeRobotMotorRpm(&SensorM5);
+  SensorM5_RpmFild = Util_FilterState(&FilterRpm_SensorM5, SensorM5_Rpm);
 }
 
 /*

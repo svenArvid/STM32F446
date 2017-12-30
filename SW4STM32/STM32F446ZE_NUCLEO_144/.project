@@ -205,5 +205,10 @@
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Src/Modbus.c</location>
 		</link>
+    <link>
+			<name>Example/User/ExportedSignals.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/Src/ExportedSignals.c</location>
+		</link>
 	</linkedResources>
 </projectDescription>

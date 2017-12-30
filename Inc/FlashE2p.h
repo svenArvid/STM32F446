@@ -18,6 +18,7 @@ typedef enum {
   E2P_ECR_RPM_LEVER_MIN_A,
   E2P_CLUTCH_SPRING_PRESSURE,
   E2P_CLUTCH_IN_PRE_PRESSURE,
+  E2P_NEO_PIXEL_APP,
 
   E2P_NUM_PARAMETERS            // Always last - let the toolchain count the parameters
 } tE2Index;

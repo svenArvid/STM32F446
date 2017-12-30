@@ -63,14 +63,11 @@ uint8_t Crc_CalcCrc8(const uint8_t *data, const uint32_t size)
   return crc;
 }
 
-static uint16_t Crc16_Update(uint16_t Crc, uint8_t byte)
+
+static inline uint16_t Crc16_Update(uint16_t Crc, uint8_t byte)
 {
-  uint16_t Tmp, Int_c;
 
-  Int_c = byte;
-
-  Tmp = Crc ^ Int_c;
-  Crc = (Crc >> 8) ^ crc16_lookup[Tmp & 0xff];
+  Crc = (Crc >> 8) ^ crc16_lookup[(uint8_t)(byte ^ Crc)];
 
   return Crc;
 }

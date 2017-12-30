@@ -28,6 +28,7 @@ const tE2pDefault E2pDefault[E2P_NUM_PARAMETERS] =
   { 0, 1000,    E2P_DEFAULT(150,        E2P_ECR_RPM_LEVER_MIN_A)       }, 
   { 0, 2500,    E2P_DEFAULT(350,        E2P_CLUTCH_SPRING_PRESSURE)    }, 
   { 0, 2500,    E2P_DEFAULT(700,        E2P_CLUTCH_IN_PRE_PRESSURE)    }, 
+  { 0, 2,       E2P_DEFAULT(1,          E2P_NEO_PIXEL_APP)             },
 };
 
 static int16_t E2pRamMirror[E2P_NUM_PARAMETERS];
@@ -317,7 +318,7 @@ int16_t E2p_GetDefaultVal(tE2Index Index)
 
 // This function is used by application to change a parameter. 
 // Only do the update if the new value is different from what is already in Ram mirror, (minimize writes to Flash)
-// The Flash is NOT updated in this function, but since Synch bit is reset FlashE2p knows that it will need to update Flash (in 100ms loop) 
+// The Flash is NOT updated in this function, but since Synch bit is reset, FlashE2p knows that it will need to update Flash (in 100ms loop) 
 void FlashE2p_UpdateParameter(tE2Index Index, int16_t Data)
 {
   if (FlashE2p_ReadMirror(Index) != Data)

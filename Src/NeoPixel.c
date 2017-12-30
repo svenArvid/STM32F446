@@ -13,6 +13,7 @@
 #include "Util.h"
 #include "Pwm.h"
 #include "SensorMgr.h"
+#include "FlashE2p.h"
 
 /* Timer handler declaration */
 TIM_HandleTypeDef        Timer14Handle;
@@ -177,11 +178,11 @@ static void NeoPixel_TivoliApp(void)
 
 //----------------------------------------------
 #define MIN_RED    0
-#define MAX_RED   64
+#define MAX_RED   29
 #define MIN_BLUE   0
-#define MAX_BLUE  64
+#define MAX_BLUE  31
 #define MIN_GREEN  0
-#define MAX_GREEN 24
+#define MAX_GREEN 22
 
 static void NeoPixel_TemeratureApp(void)
 {
@@ -211,8 +212,30 @@ static void NeoPixel_TemeratureApp(void)
 
 void NeoPixel_100ms(void)
 {
-  NeoPixel_TivoliApp();
-  //NeoPixel_TemeratureApp();
+  static uint16_t NeoPixelApp_old = 0;
+
+  if (FlashE2p_ReadMirror(E2P_NEO_PIXEL_APP) != NeoPixelApp_old)  // When app changes, turn off all pixels for one tick
+  {
+    (void)memset(NeoTx.ColorData, 0, sizeof(NeoTx.ColorData));
+    NeoPixelApp_old = FlashE2p_ReadMirror(E2P_NEO_PIXEL_APP);
+    NeoPixel_TxStart();
+  }
+  else 
+  {
+    switch (FlashE2p_ReadMirror(E2P_NEO_PIXEL_APP))
+    {
+    case 1:
+      NeoPixel_TivoliApp();
+      break;
+    case 2:
+      NeoPixel_TemeratureApp();
+      break;
+
+    case 0:
+    default:
+      break;
+    }
+  }
 }
 
 /**
@@ -230,22 +253,20 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
     if (__HAL_TIM_GET_IT_SOURCE(&Timer14Handle, TIM_IT_UPDATE) != RESET)
     {
       //------------------ NeoPixel part starts ------------------
-      if (NeoTx.currLED < NUM_LEDS)
-      {
-        TIM14->CCR1 = NeoTx.PreComputedDuty; // Note: Writing duty is very time critical. Shall be done within 0.4 us after IRQ occurs. Thus the value is precomputed
+      TIM14->CCR1 = NeoTx.PreComputedDuty; // Note: Writing duty is very time critical. Shall be done within 0.4 us after IRQ occurs. Thus the value is precomputed
 
-        if (NeoTx.ColorBit != 0) {
-          NeoTx.ColorBit--;
-        }
-        else // Move to next LED
-        {
-          NeoTx.ColorBit = MOST_SIG_COLOR_BIT;
-          NeoTx.currLED++;
-        }
-        // Precompute value that shall be used next time    
-        NeoTx.PreComputedDuty = Util_BitRead(NeoTx.ColorData[NeoTx.currLED], NeoTx.ColorBit) ? TIME_ONE_HIGH : TIME_ZERO_HIGH;  // Note: When currLED == NUM_LEDS we will read outside array, but that value will never be used.
+      if (NeoTx.ColorBit != 0) {
+        NeoTx.ColorBit--;
       }
-      else  // All Neo Pixel data sent. Stop timer and disable Interrupt. 
+      else // Move to next LED
+      {
+        NeoTx.ColorBit = MOST_SIG_COLOR_BIT;
+        NeoTx.currLED++;
+      }
+      // Precompute value that shall be used next time    
+      NeoTx.PreComputedDuty = Util_BitRead(NeoTx.ColorData[NeoTx.currLED], NeoTx.ColorBit) ? TIME_ONE_HIGH : TIME_ZERO_HIGH;  // Note: When currLED == NUM_LEDS we will read outside array, but that value will never be used.
+      
+      if (NeoTx.currLED >= NUM_LEDS)  // All Neo Pixel data sent. Stop timer and disable Interrupt.
       {  
         NeoTx.currLED = 0;
         NeoTx.TxBusy = FALSE;

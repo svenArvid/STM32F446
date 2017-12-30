@@ -54,7 +54,7 @@ void InputCapture_Init(void)
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 
-  /* Enable TIM2 clock */
+  /* Enable TIM2 and TIM5 clock */
   __HAL_RCC_TIM2_CLK_ENABLE();
   __HAL_RCC_TIM5_CLK_ENABLE();
 

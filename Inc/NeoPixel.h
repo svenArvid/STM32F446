@@ -39,12 +39,13 @@
 
 typedef struct {
   uint32_t ColorData[NUM_LEDS];
-  int32_t PreComputedDuty;
-  int32_t currLED;
-  int32_t ColorBit;
+  uint16_t PreComputedDuty;
+  uint16_t currLED;
+  uint16_t ColorBit;
   bool TxBusy;
 } NeoPixel_TxData;
 
+extern NeoPixel_TxData          NeoTx;
 extern TIM_HandleTypeDef        Timer14Handle;
 
 

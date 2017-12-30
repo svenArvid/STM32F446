@@ -98,7 +98,7 @@ static void Main_Init(void)
   InputCapture_Init();
   Pwm_Init();
   RadioTransmit_Init();
-  //Adc_Init();
+  Adc_Init();
   NeoPixel_Init();
 
   SpeedSensor_Init();

@@ -68,6 +68,6 @@ int16_t SensorMgr_SetTemperature(TempSensor *Snsr, uint16_t ADC_Val)
 void SensorMgr_20ms(void)
 {
   //uint16_t ADC_Val = Adc_Read();
-  RoomTempSnsr.ADCVal = Adc_Read(0);
+  RoomTempSnsr.ADCVal = Adc_Read(1);
   SensorMgr_SetTemperature(&RoomTempSnsr, RoomTempSnsr.ADCVal);
 }
