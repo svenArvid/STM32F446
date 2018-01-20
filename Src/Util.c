@@ -26,28 +26,28 @@ bool Util_SetSRLatchState(Util_SRLatch *latch, bool Set, bool Reset)
 
 // Linear Interpolation. To get correct integer calculations, some calculations multiply and divide with MULTIPLIER (2^12).
 // Xaxis (and Yaxis) is allowed to be decreasing. 
-// Note: last parameter is maxIndex, i.e. ArraySize - 1
-int32_t Util_Interpolate(int32_t x, const int16_t Xaxis[], const int16_t Yaxis[], uint32_t maxIndex)
+// Value gets extrapolated if outside range.
+int32_t Util_Interpolate(int32_t x, const int16_t Xaxis[], const int16_t Yaxis[], uint32_t arrayLen)
 {
   int32_t frac;
+  uint32_t maxIndex = arrayLen - 1;
   uint32_t Idx;
   uint32_t i_xMax = maxIndex;
   uint32_t i_xMin = 0;
-
 
   if (Xaxis[0] > Xaxis[maxIndex]) { // If Xaxis values are decreasing
     i_xMax = 0;
     i_xMin = maxIndex;
   }
     
-  // Check if x is out of bounds and if so return max/min value
-  if (x <= Xaxis[i_xMin]) {
-    return Yaxis[i_xMin];
-  }
-  else if (x >= Xaxis[i_xMax]) {
-    return Yaxis[i_xMax];
-  }
-  else 
+  // Check if x is at the boundary and if so return max/min value
+ // if (x == Xaxis[i_xMin]) {
+ //   return Yaxis[i_xMin];
+ // }
+ // else if (x == Xaxis[i_xMax]) {
+ //   return Yaxis[i_xMax];
+//  }
+//  else 
   {
     /* Binary Search.  i_xMax is the index for the larger x value. Thus if Xaxis is decreasing i_xMax < i_XxMin */
     Idx = maxIndex / 2;
@@ -64,12 +64,12 @@ int32_t Util_Interpolate(int32_t x, const int16_t Xaxis[], const int16_t Yaxis[]
       Idx = (i_xMax + i_xMin) / 2;
     }
 
-    // Maybe Add Division by zero check here!
+    // Maybe Add Division by zero check here or assert.
 
     frac = MULTIPLIER*(x - Xaxis[i_xMin]) / (Xaxis[i_xMax] - Xaxis[i_xMin]);  // Fixed point calculation
   }
 
-  return ((MULTIPLIER - frac)*Yaxis[i_xMin] + frac*Yaxis[i_xMax] + MULTIPLIER/2) / MULTIPLIER; // + MULTIPLIER/2 to get correct rounding
+  return ((MULTIPLIER - frac)*Yaxis[i_xMin] + frac*Yaxis[i_xMax] /*+ MULTIPLIER/2*/) / MULTIPLIER; // + MULTIPLIER/2 to get correct rounding
 }
 
 
@@ -78,8 +78,16 @@ int32_t Util_Interpolate(int32_t x, const int16_t Xaxis[], const int16_t Yaxis[]
 // Example: newVal = map(val, 0, 1023, 128, 255), maps the value from range [0, 1023] to [128, 255]
 int32_t Util_Map(int32_t x, int32_t x_min, int32_t x_max, int32_t y_min, int32_t y_max)
 {
-  int32_t y = ((x - x_min) * (y_max - y_min) + (x_max - x_min) / 2) / (x_max - x_min) + y_min;
-  return y;
+  if (x_max == x_min)
+  {
+    return y_min;  // Avoid division by zero
+  }
+  else
+  {
+    int32_t y = ((x - x_min) * (y_max - y_min) + (x_max - x_min) / 2) / (x_max - x_min) + y_min;
+    return y;
+  }
+  
 }
 
 // Timer object, updates a timer. Shall be called periodically. Output is TRUE when timer has finished. 

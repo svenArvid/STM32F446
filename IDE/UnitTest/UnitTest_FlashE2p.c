@@ -21,6 +21,11 @@ HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t Address, uint
   *(uint32_t*)Address = (uint32_t)Data;
   return HAL_OK;
 }
+
+HAL_StatusTypeDef HAL_FLASH_Unlock(void)
+{
+  return HAL_OK;
+}
 // END OF Mockup functions
 
 

@@ -142,6 +142,7 @@
     <ClCompile Include="UnitTest_Util.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Uart.h" />
     <ClInclude Include="UnitTest.h" />
     <ClInclude Include="UnitTestDefs.h" />
   </ItemGroup>

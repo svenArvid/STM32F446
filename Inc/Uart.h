@@ -8,7 +8,7 @@
 #define USART3_BUFF_SIZE  2048
 #define USART6_BUFF_SIZE  1024
 
-#define UART_PRINTF(...)  USART3_TxBuffIndex += sprintf(USART3_TxBuff + USART3_TxBuffIndex, __VA_ARGS__)
+#define UART_PRINTF(...)  { USART3_TxBuffIndex += sprintf(USART3_TxBuff + USART3_TxBuffIndex, "Info: "); USART3_TxBuffIndex += sprintf(USART3_TxBuff + USART3_TxBuffIndex, __VA_ARGS__); }
 
 typedef struct {
   uint8_t  *Buffer;

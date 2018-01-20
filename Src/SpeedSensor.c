@@ -23,72 +23,40 @@ ShaftSpeedSensor SensorM5;
 void SpeedSensor_Init()  
 {  
 	(void)memset(&SensorIG53A, 0, sizeof(ShaftSpeedSensor));
-  SensorIG53A.TimInstance = TIM2;
-  SensorIG53A.Channel = TIM_CHANNEL_1;
-  SensorIG53A.Tim_SR_CCxIF = TIM_SR_CC1IF;
+  SensorIG53A.Ic.TimInstance = TIM2;
+  SensorIG53A.Ic.Channel = TIM_CHANNEL_1;
+  SensorIG53A.Ic.Tim_SR_CCxIF = TIM_SR_CC1IF;
 
   (void)memset(&SensorIG53B, 0, sizeof(ShaftSpeedSensor));
-  SensorIG53B.TimInstance = TIM2;
-  SensorIG53B.Channel = TIM_CHANNEL_2;
-  SensorIG53B.Tim_SR_CCxIF = TIM_SR_CC2IF;
+  SensorIG53B.Ic.TimInstance = TIM2;
+  SensorIG53B.Ic.Channel = TIM_CHANNEL_2;
+  SensorIG53B.Ic.Tim_SR_CCxIF = TIM_SR_CC2IF;
 
   (void)memset(&SensorM5, 0, sizeof(ShaftSpeedSensor));
-  SensorM5.TimInstance = TIM2;
-  SensorM5.Channel = TIM_CHANNEL_3;
-  SensorM5.Tim_SR_CCxIF = TIM_SR_CC3IF;
-}
-
-
-// Takes a pointer to ShaftSpeedSensor as parameter, and computes period time, i.e. time between positive edges.
-// It uses a 32 bit timer.
-static void UpdatePeriod(ShaftSpeedSensor *Snsr)
-{
-  uint32_t NewTrigTime;
-
-  if (Snsr->TimInstance->SR & Snsr->Tim_SR_CCxIF)	 // If edge has been detected
-  {
-    NewTrigTime = InputCapture_ReadCCRx(Snsr->TimInstance, Snsr->Channel);  // Timer value when positive edge was detected. CCxIF flag is cleared when reading CCRx register 
-                                     
-    if (Snsr->TimeOut < FREQ_TIMEOUT)
-    {
-      Snsr->Period = NewTrigTime - Snsr->LastTrigTime;
-    }
-    else
-    {
-      Snsr->Period = 0;
-    }
-    Snsr->LastTrigTime = NewTrigTime;   //Save for next time
-    Snsr->TimeOut = 0;
-  }
-	else
-  {
-    if (++Snsr->TimeOut >= FREQ_TIMEOUT)
-    {
-	    Snsr->TimeOut = FREQ_TIMEOUT;
-	    Snsr->Period = 0;
-    }
-  }
+  SensorM5.Ic.TimInstance = TIM2;
+  SensorM5.Ic.Channel = TIM_CHANNEL_3;
+  SensorM5.Ic.Tim_SR_CCxIF = TIM_SR_CC3IF;
 }
 
 
 void SpeedSensor_1ms()
 {
- UpdatePeriod(&SensorIG53A);
- UpdatePeriod(&SensorIG53B);
+  InputCapture_UpdatePeriod(&SensorIG53A.Ic, 500);
+  InputCapture_UpdatePeriod(&SensorIG53B.Ic, 500);
 
- UpdatePeriod(&SensorM5);
+  InputCapture_UpdatePeriod(&SensorM5.Ic, 1000);
 }
 
 // Compute Rpm based on Pulse period for a speed sensor.
 // Note that Period = 0 has special meaning (No pulses have been captured for a while) -> Rpm shall be 0
-static int16_t ComputeShaftRpm(const ShaftSpeedSensor *Snsr) 
+static int16_t ComputeShaftRpm(const ShaftSpeedSensor *Snsr, uint32_t MinFreqHz, uint32_t MaxFreqHz)
 {
 	uint32_t MotorRpm;  // Speed before gearbox
   uint32_t ShaftRpm;  // Speed after gearbox
 
-  if (MIN_PERIOD < Snsr->Period && Snsr->Period < MAX_PERIOD)
+  if (InputCapture_SignalInRange(&Snsr->Ic, MinFreqHz, MaxFreqHz)) //Frequency between 400 Hz and 0.25 Hz (0.5 Hz for TUG) 
 	{
-    MotorRpm = TIMER_CLOCK_FREQ * 60 / Snsr->Period / PULSES_PER_REV;
+    MotorRpm = TIM2_CLOCK_FREQ * 60 / Snsr->Ic.Period / PULSES_PER_REV;
     ShaftRpm = MotorRpm * GEAR_RATIO;	
 	}
 	else 
@@ -102,9 +70,9 @@ static int16_t ComputeRobotMotorRpm(const ShaftSpeedSensor *Snsr)
 {
   uint32_t MotorRpm;  // Speed before gearbox
   
-  if (MIN_PERIOD < Snsr->Period && Snsr->Period < MAX_PERIOD)
+  if (MIN_PERIOD < Snsr->Ic.Period && Snsr->Ic.Period < MAX_PERIOD)
   {
-    MotorRpm = TIMER_CLOCK_FREQ * 60 / Snsr->Period / 2;  // 2 white->black transitions per revolution
+    MotorRpm = TIM2_CLOCK_FREQ * 60 / Snsr->Ic.Period / 2;  // 2 white->black transitions per revolution
   }
   else
   {
@@ -118,11 +86,9 @@ Util_Filter Filter_PhaseLag = { 75, 10 };    // Very fast LP-filter which remove
 // Computes phase lag between 2 shaft speed sensors and from that determines rotation direction
 static enum RotationDirection CheckShaftRotationDirection(const ShaftSpeedSensor *Snsr1, const ShaftSpeedSensor *Snsr2)
 {
-  uint32_t Snsr1_TimeStampOfPrevPulse;
   uint32_t PhaseLagRaw, PhaseLagFild;
-  uint32_t DegreesPerCycle;
 
-  if (Snsr1->SensorFaultTimeOut || Snsr2->SensorFaultTimeOut) 
+  if (Snsr1->SensorFaultTimeOut || Snsr2->SensorFaultTimeOut)
   {
     return SensorError;
   }
@@ -130,23 +96,19 @@ static enum RotationDirection CheckShaftRotationDirection(const ShaftSpeedSensor
   {
     return UnreliableSignal;
   }
-  else if (0 == Snsr1->Period || 0 == Snsr2->Period) // Note: Thus ok to divide with Snsr1->Period (below) since it is not 0.
+  else if (!InputCapture_SignalInRange(&Snsr1->Ic, FREQ_1p0_HZ, FREQ_1000_HZ) || !InputCapture_SignalInRange(&Snsr2->Ic, FREQ_1p0_HZ, FREQ_1000_HZ)) // If at least one signal is out of range
   {
+    
     return ZeroSpeed;
   }
 
   else                        //  Timing of pulses:    |--- P1 ----- P2 ---------- P1' ------ (P2') ---|                   
   {
-    Snsr1_TimeStampOfPrevPulse = Snsr1->LastTrigTime - Snsr1->Period;   // Snsr1->LastValTimer is P1' and Snsr1_TimeStampOfPrevPulse is P1.
-      
-    // Compute PhaseLag i.e. how many degrees P2 comes in after P1
-    DegreesPerCycle = 360UL / PULSES_PER_REV;
-    PhaseLagRaw = (DegreesPerCycle * (Snsr2->LastTrigTime - Snsr1_TimeStampOfPrevPulse) / Snsr1->Period );
-    
-    PhaseLagRaw %= DegreesPerCycle;    // If Snsr2->LastValTimer is P2', i.e. "newer" than P1', PhaseLag > 120 degrees, thus use modulo. Ex: PhaseLag is 155: 155 % 120 is 35
+    PhaseLagRaw = InputCapture_RelativePhaseLag(&Snsr1->Ic, &Snsr2->Ic);
+    PhaseLagRaw = (uint16_t)((PhaseLagRaw * 360UL) / PULSES_PER_REV / 1000UL);  // Convert from promill to degrees
 
-    // Apply Low-pass filter on phase lag, since it can be a bit jumpy  
-    PhaseLagFild = Util_FilterState(&Filter_PhaseLag, PhaseLagRaw);
+    // Apply Low-pass filter on phase lag, because have seen on real data that when rpm is high (1500-1600) signal is noisy and PhaseLagRaw can jump ...
+    PhaseLagFild = Util_FilterState(&Filter_PhaseLag, PhaseLagRaw); // ... so much that the algorithm interprets as direction changes.
 
 
     if (15 <= PhaseLagFild && PhaseLagFild <= 45) {    // Distance between sensors is 90 degrees, 120 - 90 = 30
@@ -164,19 +126,19 @@ static enum RotationDirection CheckShaftRotationDirection(const ShaftSpeedSensor
 // Used for clutch unit to determine sign of output shaft speed signal, 
 // The sign of speed is considered negative if: Current Rotation Direction is counter clockwise OR if it is Undefined but it was previously Counter clock wise.
 // Else it is considered positive. Note: this implies that if SensorError OR UnreliableSignal, the speed is considered  positive.
-static int SetOutputShaftSpeedSign(enum RotationDirection CurrRotDir)
+static int16_t SetOutputShaftSpeedSign(enum RotationDirection CurrRotDir)
 {
   static enum RotationDirection RotDirLastTick = ZeroSpeed;
   static enum RotationDirection PreviousRotDir = ZeroSpeed;
   bool CurrRotDirNegative;
   bool PreviousRotDirNegative;
 
-  int SignOfOutputShaftSpeed = 1;
-  
+  int16_t SignOfOutputShaftSpeed = 1;
+
   if (RotDirLastTick != CurrRotDir) {
     PreviousRotDir = RotDirLastTick;
   }
-  
+
   // Compare rotation direction with engine's rotation direction.
   CurrRotDirNegative = CurrRotDir == CounterClockWise;
 
@@ -274,8 +236,8 @@ int16_t SensorM5_RpmFild;
 
 void SpeedSensor_4ms(void)
 {
-  SensorIG53A_Rpm = ComputeShaftRpm(&SensorIG53A);
-  SensorIG53B_Rpm = ComputeShaftRpm(&SensorIG53B);
+  SensorIG53A_Rpm = ComputeShaftRpm(&SensorIG53A, FREQ_1p0_HZ, FREQ_1000_HZ);
+  SensorIG53B_Rpm = ComputeShaftRpm(&SensorIG53B, FREQ_1p0_HZ, FREQ_1000_HZ);
  
   SensorIG53A_RpmFild = Util_FilterState(&FilterRpm_SensorIG53A, SensorIG53A_Rpm);
   SensorIG53B_RpmFild = Util_FilterState(&FilterRpm_SensorIG53B, SensorIG53B_Rpm);

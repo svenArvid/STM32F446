@@ -19,15 +19,16 @@ typedef struct {
 
 extern FILE* fp;
 
-extern void UnitTest_CrcTableGenerator(void);
-extern void UnitTest_CrcCalcCrc8(void);
+void UnitTest_CrcTableGenerator(void);
+void UnitTest_CrcCalcCrc8(void);
+void UnitTest_Crc_CalcCrc16(void);
 
-extern void UnitTest_Util_Interpolate(void);
-extern void UnitTest_Util_SRLatch(void);
-extern void UnitTest_Util_FilterState(void);
-extern void UnitTest_Util_Map(void);
+void UnitTest_Util_Interpolate(void);
+void UnitTest_Util_SRLatch(void);
+void UnitTest_Util_FilterState(void);
+void UnitTest_Util_Map(void);
 
-extern void UnitTest_RadioReceive(void);
-extern void UnitTest_FlashE2p(void);
+void UnitTest_RadioReceive(void);
+void UnitTest_FlashE2p(void);
 
 #endif // __UNIT_TEST_H

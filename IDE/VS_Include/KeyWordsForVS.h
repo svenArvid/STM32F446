@@ -6,6 +6,8 @@
 #define inline
 #define __STATIC_INLINE static
 #define __weak
-#define ...
+#define __RAM_FUNC
+
+//#define ... 
 
 #endif

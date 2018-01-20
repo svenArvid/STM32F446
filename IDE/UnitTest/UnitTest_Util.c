@@ -5,52 +5,52 @@
 #include "RadioReceive.h"
 
 
-uint16_t Xaxis[] = { 554, 629, 716, 817, 933, 1067, 1226, 1410, 1623, 1872, 2159, 2492, 2874, 3314, 3818, 4390, 5024, 5725, 6495,
+static uint16_t axis1[] = { 554, 629, 716, 817, 933, 1067, 1226, 1410, 1623, 1872, 2159, 2492, 2874, 3314, 3818, 4390, 5024, 5725, 6495,
 7321, 8191, 9093, 9987, 10865, 11703, 12483, 13202, 13835, 14364, 14809, 15174, 15468, 15700, 15880 };
 
-int16_t Yaxis[] = { 1250, 1200, 1150, 1100, 1050, 1000, 950, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450, 400, 350,
+static int16_t axis2[] = { 1250, 1200, 1150, 1100, 1050, 1000, 950, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450, 400, 350,
 300, 250, 200, 150, 100, 50, 0, -50, -100, -150, -200, -250, -300, -350, -400 };
 
 // Axes with increasing Temperature:
-const int16_t NTC3950_ADCArr[] = { 15880, 15700, 15468, 15174, 14809, 14364, 13835, 13202, 12483, 11703, 10865, 9987, 9093, 8191, 7321,
+static const int16_t NTC3950_ADCArr[] = { 15880, 15700, 15468, 15174, 14809, 14364, 13835, 13202, 12483, 11703, 10865, 9987, 9093, 8191, 7321,
 6495, 5725, 5024, 4390, 3818, 3314, 2874, 2492, 2159, 1872, 1623, 1410, 1226, 1067, 933, 817, 716, 629, 554 };
 
-const int16_t NTC3950_TempArr[] = { -400, -350, -300, -250, -200, -150, -100, -50, 0, 50, 100, 150, 200, 250, 300, 350, 400, 450,
+static const int16_t NTC3950_TempArr[] = { -400, -350, -300, -250, -200, -150, -100, -50, 0, 50, 100, 150, 200, 250, 300, 350, 400, 450,
 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250 };
 
+#define PRINT_RESULT(x, y, comment) fprintf(fp, "%6d %6d 	// %s\n", x, y, comment);
 void UnitTest_Util_Interpolate(void)
 {
   int32_t result;
   uint16_t ADC_Val[] = { 16000, 15880, 15879, 12000, 9578, 7468, 5123, 555, 554, 500 };
   int16_t Temperature[] = { -450, -400, -399, 31, 173, 292, 443, 1249, 1250, 1251 };
 
-  printf(" Testing Util_Interpolate\n");
-  for (int i = 0; i < 10; i++) {
-    result = Util_Interpolate(ADC_Val[i], Xaxis, Yaxis, sizeof(Xaxis) / sizeof(Xaxis[0]));
+  fprintf(fp, "SignalList:\n");
+  fprintf(fp, "   X      Y  \n--------------------------------------\n");
 
-    printf("ADC Value: %6d, Temperature: %4d\n", ADC_Val[i], result);
+  fprintf(fp, " \nTesting with Axes with decreasing Temperature and increasing ADC Vals\n");
+  for (int i = 0; i < 10; i++) {
+    result = Util_Interpolate(ADC_Val[i], axis1, axis2, sizeof(axis1) / sizeof(axis1[0]));
+    PRINT_RESULT(ADC_Val[i], result, "");
   }
 
-  printf("\nTest to go the other direction, from Temperature to ADC val:\n");
+  fprintf(fp, "\nTest to go the other direction, from Temperature to ADC val:\n");
   for (int i = 0; i < 10; i++) {
-    result = Util_Interpolate(Temperature[i], Yaxis, Xaxis, sizeof(Xaxis) / sizeof(Xaxis[0]));
-
-    printf("ADC Value: %6d, Temperature: %4d\n", result, Temperature[i]);
+    result = Util_Interpolate(Temperature[i], axis2, axis1, sizeof(axis1) / sizeof(axis1[0]));
+    PRINT_RESULT(Temperature[i], result, "");
   }
 
   // ------------------------
-  printf(" \nTesting with Axes with increasing Temperature\n");
+  fprintf(fp, " \nTesting with reversed axes i.e. axes with increasing Temperature and decreasing ADC Vals\n");
   for (int i = 0; i < 10; i++) {
-    result = Util_Interpolate(ADC_Val[i], NTC3950_ADCArr, NTC3950_TempArr, sizeof(Xaxis) / sizeof(Xaxis[0]));
-
-    printf("ADC Value: %6d, Temperature: %4d\n", ADC_Val[i], result);
+    result = Util_Interpolate(ADC_Val[i], NTC3950_ADCArr, NTC3950_TempArr, sizeof(NTC3950_ADCArr) / sizeof(NTC3950_ADCArr[0]));
+    PRINT_RESULT(ADC_Val[i], result, "");
   }
 
-  printf("\nTest to go the other direction, from Temperature to ADC val:\n");
+  fprintf(fp, "\nTest to go the other direction, from Temperature to ADC val:\n");
   for (int i = 0; i < 10; i++) {
-    result = Util_Interpolate(Temperature[i], NTC3950_TempArr, NTC3950_ADCArr, sizeof(Xaxis) / sizeof(Xaxis[0]));
-
-    printf("ADC Value: %6d, Temperature: %4d\n", result, Temperature[i]);
+    result = Util_Interpolate(Temperature[i], NTC3950_TempArr, NTC3950_ADCArr, sizeof(NTC3950_ADCArr) / sizeof(NTC3950_ADCArr[0]));
+    PRINT_RESULT(Temperature[i], result, "");
   }
 }
 
@@ -145,19 +145,66 @@ void UnitTest_Util_FilterState(void)
   }
 }
 
+#define PRINT_RESULT(comment) fprintf(fp, "%5d %5d %5d %5d %5d %5d	// %s\n", x, y, x_min, x_max, y_min, y_max, comment);
 void UnitTest_Util_Map(void)
 {
-  int32_t result;
+  int32_t x, y;
+  int32_t x_min, x_max;
+  int32_t y_min, y_max;
+
+  fprintf(fp, "SignalList:\n");
+  fprintf(fp, "   x    y   x_min  x_max  y_min  y_max\n--------------------------------------\n");
   
-  printf("\nTesting Util_Map\n");
-  result = Util_Map(320, 600, 0, 0, 64);
-  printf("Util_Map(320, 600, 0, 0, 64): %4d\n\n", result);
+  x_min = 640;
+  x_max = 3200;
+  y_min = 650;
+  y_max = 1600;
 
-  result = Util_Map(500, 600, 0, 0, 64);
-  printf("Util_Map(500, 600, 0, 0, 64): %4d\n\n", result);
+  x = 600;
+  y = Util_Map(x, x_min, x_max, y_min, y_max);
+  PRINT_RESULT("AD value -> engine rpm");
 
-  result = Util_Map(700, 600, 0, 0, 64);
-  printf("Util_Map(700, 600, 0, 0, 64): %4d\n\n", result);
+  x = 640;
+  y = Util_Map(x, x_min, x_max, y_min, y_max);
+  PRINT_RESULT("Boundary value");
+
+  x = 892;
+  y = Util_Map(x, x_min, x_max, y_min, y_max);
+  PRINT_RESULT("");
+
+  x = 2000;
+  y = Util_Map(x, x_min, x_max, y_min, y_max);
+  PRINT_RESULT("");
+
+  x = 3200;
+  y = Util_Map(x, x_min, x_max, y_min, y_max);
+  PRINT_RESULT("Boundary value");
+
+  x = 3300;
+  y = Util_Map(x, x_min, x_max, y_min, y_max);
+  PRINT_RESULT("values outside range are extrapolated");
+
+  x_min = 600;
+  x_max = 0;
+  y_min = 0;
+  y_max = 64;
+  
+  x = 100;
+  y = Util_Map(x, x_min, x_max, y_min, y_max);
+  PRINT_RESULT("Note that x_min < x_max, and x_min is mapped to y_min");
+
+  x = 500;
+  y = Util_Map(x, x_min, x_max, y_min, y_max);
+  PRINT_RESULT("");
+
+  x = 700;
+  y = Util_Map(x, x_min, x_max, y_min, y_max);
+  PRINT_RESULT("");
+
+  x_min = 600;
+  x_max = 600;
+  y = Util_Map(x, x_min, x_max, y_min, y_max);
+  PRINT_RESULT("x_min == x_max is illegal input. To avoid division by 0, return value is set to y_min");
 }
 
 

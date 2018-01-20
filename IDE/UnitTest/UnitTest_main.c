@@ -59,14 +59,12 @@ static UnitTest_TestCaseWrapper(char* FileName,  void(*TestCase)(void))
 // Main Entry point
 int main()
 {
-  UnitTest_Util_Interpolate();
-
   UnitTest_CrcTableGenerator();
 
   UnitTest_CrcCalcCrc8();
 
-  UnitTest_Util_Map();
-
+  UnitTest_TestCaseWrapper("TC_Crc_CalcCrc16.txt", UnitTest_Crc_CalcCrc16);
+  
   UnitTest_RadioReceive();
 
   UnitTest_FlashE2p();
@@ -74,6 +72,10 @@ int main()
   UnitTest_TestCaseWrapper("TC_Util_SRLatch.txt", UnitTest_Util_SRLatch);
 
   UnitTest_TestCaseWrapper("TC_Util_FilterState.txt", UnitTest_Util_FilterState);
+
+  UnitTest_TestCaseWrapper("TC_Util_Interpolate.txt", UnitTest_Util_Interpolate);
+
+  UnitTest_TestCaseWrapper("TC_Util_Map.txt", UnitTest_Util_Map);
 
   system("pause");
 }

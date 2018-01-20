@@ -76,7 +76,7 @@ void InputCapture_Init(void)
 
   // ------ Setup Timer 2 ------
   /* Compute the prescaler value to have TIM2 counter clock equal to 10 MHz */
-  uwPrescalerValue = (uint32_t)((uwTimclock / 10000000U) - 1U);
+  uwPrescalerValue = (uint32_t)((uwTimclock / TIM2_CLOCK_FREQ) - 1U);
 
   /* Initialize TIM2 */
   Timer2Handle.Instance = TIM2;
@@ -143,24 +143,23 @@ void InputCapture_Init(void)
   HAL_TIM_IC_Start(&Timer5Handle, TIM_CHANNEL_4);
 }
 
-
-uint32_t InputCapture_ReadCCRx(TIM_TypeDef *TimInstance, uint32_t Channel)
+static uint32_t InputCapture_ReadCCRx(const InputCapture_t *Ic)
 {
   uint32_t RegisterVal = 0;
 
-  switch (Channel)
+  switch (Ic->Channel)
   {
   case TIM_CHANNEL_1:
-    RegisterVal = TimInstance->CCR1;
+    RegisterVal = Ic->TimInstance->CCR1;
     break;
   case TIM_CHANNEL_2:
-    RegisterVal = TimInstance->CCR2;
+    RegisterVal = Ic->TimInstance->CCR2;
     break;
   case TIM_CHANNEL_3:
-    RegisterVal = TimInstance->CCR3;
+    RegisterVal = Ic->TimInstance->CCR3;
     break;
   case TIM_CHANNEL_4:
-    RegisterVal = TimInstance->CCR4;
+    RegisterVal = Ic->TimInstance->CCR4;
     break;
   default:
     break;
@@ -168,3 +167,106 @@ uint32_t InputCapture_ReadCCRx(TIM_TypeDef *TimInstance, uint32_t Channel)
 
   return RegisterVal;
 }
+
+uint32_t InputCapture_GetCurrentTime(void)
+{
+  return TIM2->CNT;
+}
+
+void InputCapture_UpdatePeriod(InputCapture_t *Ic, const uint16_t FreqTimeout)
+{
+  uint32_t NewTrigTime;
+
+  if (Ic->TimInstance->SR & Ic->Tim_SR_CCxIF)	 // If edge has been detected
+  {
+    NewTrigTime = InputCapture_ReadCCRx(Ic);  // Timer value when positive edge was detected. CCxIF flag is cleared when reading CCRx register 
+
+    if (Ic->TimeOut < FreqTimeout)
+    {
+      Ic->Period = NewTrigTime - Ic->LastTrigTime;
+    }
+    else
+    {
+      Ic->Period = 0;
+    }
+    Ic->LastTrigTime = NewTrigTime;   //Save for next time
+    Ic->TimeOut = 0;
+  }
+  else
+  {
+    if (++Ic->TimeOut >= FreqTimeout)
+    {
+      Ic->TimeOut = FreqTimeout;
+      Ic->Period = 0;
+    }
+  }
+}
+
+
+uint16_t InputCapture_RelativePhaseLag(const InputCapture_t *Ic1, const InputCapture_t *Ic2)
+{
+  uint32_t Ic1_TimeStampOfPrevPulse;                         
+  uint32_t PhaseLagRel;
+
+  Ic1_TimeStampOfPrevPulse = Ic1->LastTrigTime - Ic1->Period;    // P1 = P1' - period
+  
+  //                            <------------------- 100 % --------------->
+  // Timing of pulses:    |--- P1 -------------- P2 --------------------- P1' -------------- (P2') ---|
+  //                            < -- Phase Lag -->
+
+  PhaseLagRel = (1000UL * (Ic2->LastTrigTime - Ic1_TimeStampOfPrevPulse) / Ic1->Period);
+
+  PhaseLagRel %= 1000UL;    // If Ic2->LastValTimer is P2', i.e. "newer" than P1', PhaseLag > 1000, thus use modulo. Ex: PhaseLag is 1250: 1250 % 1000 is 250
+
+  return (uint16_t)PhaseLagRel;
+}
+
+
+bool InputCapture_MissedPulse(const InputCapture_t *IcPrimary, const InputCapture_t *IcNeighbour)
+{
+  uint32_t CurrentTime;
+  uint32_t Neighbour_TimeStampOfPrevPulse;
+  bool PrimaryMissedPulse;
+
+  CurrentTime = InputCapture_GetCurrentTime();    //Read actual value of timer
+  
+  Neighbour_TimeStampOfPrevPulse = IcNeighbour->LastTrigTime - IcNeighbour->Period;                       // Timestamp of second last pulse for neighbour sensor
+  PrimaryMissedPulse = (CurrentTime - Neighbour_TimeStampOfPrevPulse < CurrentTime - IcPrimary->LastTrigTime);
+
+  return PrimaryMissedPulse;
+}
+
+
+bool InputCapture_SignalInRange(const InputCapture_t *Ic, uint32_t MinFreqHz, uint32_t MaxFreqHz)
+{
+  uint32_t MaxPeriod = MinFreqHz;      // Note that Min frequency corresponds to max period and vice versa
+  uint32_t MinPeriod = MaxFreqHz;
+
+  return (MinPeriod < Ic->Period) && (Ic->Period < MaxPeriod);
+}
+
+
+uint32_t InputCapture_GetFrequency(const InputCapture_t *Ic)
+{ 
+  uint32_t CentiHz;
+  
+  if (Ic->Period != 0)
+  {
+    switch ((uint32_t)(Ic->TimInstance))
+    {
+    case (uint32_t)TIM2:
+      CentiHz = (TIM2_CLOCK_FREQ / Ic->Period);  // Frequency in centi Hz
+      break;
+
+    default:
+      CentiHz = 0;
+      break;
+    }
+  }
+  else {
+    CentiHz = 0;
+  }
+  return CentiHz;
+}
+
+

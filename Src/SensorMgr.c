@@ -32,7 +32,7 @@ int16_t SensorMgr_SetTemperature(TempSensor *Snsr, uint16_t ADC_Val)
   const int16_t *TempArr;
   int32_t ShortToGndLim;
   int32_t ShortToVddLim;
-  uint32_t MaxIndex;
+  uint32_t ArrayLen;
 
   switch (Snsr->Type)
   {
@@ -41,7 +41,7 @@ int16_t SensorMgr_SetTemperature(TempSensor *Snsr, uint16_t ADC_Val)
     TempArr = NTC3950_TempArr;
     ShortToGndLim = NTC_3950_SHORT_TO_GND_LIMIT;
     ShortToVddLim = NTC_3950_SHORT_TO_VDD_LIMIT;
-    MaxIndex = sizeof(NTC3950_ADCArr) / sizeof(NTC3950_ADCArr[0]) - 1;
+    ArrayLen = sizeof(NTC3950_ADCArr) / sizeof(NTC3950_ADCArr[0]);
     break;
   
   default:
@@ -58,7 +58,7 @@ int16_t SensorMgr_SetTemperature(TempSensor *Snsr, uint16_t ADC_Val)
   }
   else {  
     Snsr->Status = NO_FAULT;
-    Snsr->Temperature = Util_Interpolate(ADC_Val, AdcArr, TempArr, MaxIndex);
+    Snsr->Temperature = Util_Interpolate(ADC_Val, AdcArr, TempArr, ArrayLen);
   }
 
   return Snsr->Temperature;

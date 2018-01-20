@@ -23,5 +23,6 @@
   <ItemGroup>
     <ClInclude Include="UnitTest.h" />
     <ClInclude Include="UnitTestDefs.h" />
+    <ClInclude Include="Uart.h" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,52 @@
+TC_Util_Interpolate
+SignalList:
+   X      Y  
+--------------------------------------
+ 
+Testing with Axes with decreasing Temperature and increasing ADC Vals
+ 16000   -433 	// 
+ 15880   -400 	// 
+ 15879   -399 	// 
+ 12000     30 	// 
+  9578    172 	// 
+  7468    291 	// 
+  5123    442 	// 
+   555   1249 	// 
+   554   1250 	// 
+   500   1285 	// 
+
+Test to go the other direction, from Temperature to ADC val:
+  -450  16060 	// 
+  -400  15880 	// 
+  -399  15876 	// 
+    31  11999 	// 
+   173   9575 	// 
+   292   7460 	// 
+   443   5122 	// 
+  1249    555 	// 
+  1250    554 	// 
+  1251    552 	// 
+ 
+Testing with reversed axes i.e. axes with increasing Temperature and decreasing ADC Vals
+ 16000   -433 	// 
+ 15880   -400 	// 
+ 15879   -399 	// 
+ 12000     30 	// 
+  9578    172 	// 
+  7468    291 	// 
+  5123    442 	// 
+   555   1249 	// 
+   554   1250 	// 
+   500   1285 	// 
+
+Test to go the other direction, from Temperature to ADC val:
+  -450  16060 	// 
+  -400  15880 	// 
+  -399  15876 	// 
+    31  11999 	// 
+   173   9575 	// 
+   292   7460 	// 
+   443   5122 	// 
+  1249    555 	// 
+  1250    554 	// 
+  1251    552 	// 

@@ -22,6 +22,7 @@
 #include "Util.h"
 
 MotorDriver Driver1;
+MotorDriver DriverM5;
 
 void MotorDriver_Init(void)
 {

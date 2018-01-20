@@ -223,4 +223,4 @@ void Pwm_500ms(void)
 
   Pwm_SetDuty(TIM4, TIM_CHANNEL_1, PwmDuty);
 
-}
+} 
