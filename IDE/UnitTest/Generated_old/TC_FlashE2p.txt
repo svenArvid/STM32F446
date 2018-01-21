@@ -1,0 +1,17 @@
+TC_FlashE2p
+SignalList:
+ Ram_0  Ram_1  Ram_2  Ram_3  Ram_4
+--------------------------------------
+     0      0      0      0      0  // Ram mirror after erase of (dummy) EEPROM
+
+Test FlashE2p Init
+Run Init routine with Flash erased. Default parameters shall be written to Flash and Ram mirror
+   800    600    200    700    150  // Ram mirror
+Flash: index 0, Data 800 
+Flash: index 4, Data 150 
+
+Run Init routine with initialized Flash. Parameters shall be read from Flash and written to Ram mirror
+     0      0      0      0      0  // Ram mirror immediately after reset. Shall be cleared
+   800    600    200    700    150  // Ram mirror after Sector init
+Flash: index 0, Data 800 
+Flash: index 4, Data 150 
