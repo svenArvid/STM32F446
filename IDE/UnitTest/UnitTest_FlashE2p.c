@@ -7,7 +7,6 @@
 
 uint32_t UnitTest_EmulatedSector[4096] = { 0 };
 
-
 // Mockups for some HAL functions 
 HAL_StatusTypeDef HAL_FLASHEx_Erase(FLASH_EraseInitTypeDef *pEraseInit, uint32_t *SectorError)
 {
@@ -34,11 +33,15 @@ uint32_t DummySectorError = 0;
 
 FlashSector TestSector;
 
+#define PRINT_RESULT(comment) fprintf(fp, "%6d %6d %6d %6d %6d  // %s\n", FlashE2p_ReadMirror(0), FlashE2p_ReadMirror(1), FlashE2p_ReadMirror(2), FlashE2p_ReadMirror(3), FlashE2p_ReadMirror(4), comment);
 void UnitTest_FlashE2p(void)
 { 
   uint32_t FlashWord;
   int16_t Data;
   uint16_t E2pIndex;
+
+  fprintf(fp, "SignalList:\n");
+  fprintf(fp, " Ram_0  Ram_1  Ram_2  Ram_3  Ram_4\n--------------------------------------\n");
 
   TestSector.BaseAddress = UnitTest_EmulatedSector;
   TestSector.EraseNeeded = FALSE;
@@ -47,36 +50,40 @@ void UnitTest_FlashE2p(void)
   TestSector.PageSize = EEPROM_PAGE_SIZE;
   TestSector.SectorNum = FLASH_SECTOR_3;
 
-  FlashE2p_EraseSector(&TestSector);    // Start with erasing dummy Eeprom
+  FlashE2p_EraseSector(&TestSector);
+  PRINT_RESULT("Ram mirror after erase of (dummy) EEPROM");
 
-  printf("\nTest FlashE2p Init\n");
-  printf("\nRun Init routine with Flash erased. Default parameters shall be written to Flash and Ram mirror\n");
+  fprintf(fp, "\nTest FlashE2p Init\n");
+  fprintf(fp, "Run Init routine with Flash erased. Default parameters shall be written to Flash and Ram mirror\n");
   FlashE2p_InitSector(&TestSector);          // Run Init when Flash is erased
-  printf("Ram mirror: %d, %d, %d, %d, %d\n", FlashE2p_ReadMirror(0), FlashE2p_ReadMirror(1), FlashE2p_ReadMirror(2), FlashE2p_ReadMirror(3), FlashE2p_ReadMirror(4));
-  
+  PRINT_RESULT("Ram mirror");
+
   FlashWord = *(uint32_t*)UnitTest_EmulatedSector;
   Data = (int16_t)(FlashWord >> 16);              // Little endian 
   E2pIndex = (uint16_t)FlashWord;
-  printf("Flash: index %d, Data %d \n", E2pIndex, Data);
+  fprintf(fp, "Flash: index %d, Data %d \n", E2pIndex, Data);
+  
   FlashWord = *(uint32_t*)(UnitTest_EmulatedSector + 4);
   Data = (int16_t)(FlashWord >> 16);              // Little endian 
   E2pIndex = (uint16_t)FlashWord;
-  printf("Flash: index %d, Data %d \n", E2pIndex, Data);
+  fprintf(fp, "Flash: index %d, Data %d \n", E2pIndex, Data);
 
-  printf("\nRun Init routine with initialized Flash. Parameters shall be read from Flash and written to Ram mirror\nClear Ram mirror to simulate a reset.\n");
+  fprintf(fp, "\nRun Init routine with initialized Flash. Parameters shall be read from Flash and written to Ram mirror\n");
   for (int i = 0; i < E2P_NUM_PARAMETERS; i++) {
     FlashE2p_WriteMirror(i, 0);
     FlashE2p_WriteSynchBit(i, FALSE);
   }
+  PRINT_RESULT("Ram mirror immediately after reset. Shall be cleared");
   FlashE2p_InitSector(&TestSector);
-  printf("Ram mirror: %d, %d, %d, %d, %d\n", FlashE2p_ReadMirror(0), FlashE2p_ReadMirror(1), FlashE2p_ReadMirror(2), FlashE2p_ReadMirror(3), FlashE2p_ReadMirror(4));
+  PRINT_RESULT("Ram mirror after Sector init");
 
   FlashWord = *(uint32_t*)UnitTest_EmulatedSector;
   Data = (int16_t)(FlashWord >> 16);              // Little endian 
   E2pIndex = (uint16_t)FlashWord;
-  printf("Flash: index %d, Data %d \n", E2pIndex, Data);
+  fprintf(fp, "Flash: index %d, Data %d \n", E2pIndex, Data);
+  
   FlashWord = *(uint32_t*)(UnitTest_EmulatedSector + 4);
   Data = (int16_t)(FlashWord >> 16);              // Little endian 
   E2pIndex = (uint16_t)FlashWord;
-  printf("Flash: index %d, Data %d \n", E2pIndex, Data);
+  fprintf(fp, "Flash: index %d, Data %d \n", E2pIndex, Data);
 }

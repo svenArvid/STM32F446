@@ -7,8 +7,8 @@ Testing with Axes with decreasing Temperature and increasing ADC Vals
  16000   -433 	// 
  15880   -400 	// 
  15879   -399 	// 
- 12000     30 	// 
-  9578    172 	// 
+ 15174   -250 	// 
+  9987    150 	// 
   7468    291 	// 
   5123    442 	// 
    555   1249 	// 
@@ -31,8 +31,8 @@ Testing with reversed axes i.e. axes with increasing Temperature and decreasing 
  16000   -433 	// 
  15880   -400 	// 
  15879   -399 	// 
- 12000     30 	// 
-  9578    172 	// 
+ 15174   -250 	// 
+  9987    150 	// 
   7468    291 	// 
   5123    442 	// 
    555   1249 	// 

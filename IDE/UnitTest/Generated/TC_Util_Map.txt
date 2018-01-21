@@ -4,11 +4,12 @@ SignalList:
 --------------------------------------
   600   636   640  3200   650  1600	// AD value -> engine rpm
   640   650   640  3200   650  1600	// Boundary value
-  892   744   640  3200   650  1600	// 
- 2000  1155   640  3200   650  1600	// 
+  892   743   640  3200   650  1600	// 
+ 2000  1154   640  3200   650  1600	// 
  3200  1600   640  3200   650  1600	// Boundary value
  3300  1637   640  3200   650  1600	// values outside range are extrapolated
   100    53   600     0     0    64	// Note that x_min < x_max, and x_min is mapped to y_min
-  500    11   600     0     0    64	// 
+  500    10   600     0     0    64	// 
   700   -10   600     0     0    64	// 
   700     0   600   600     0    64	// x_min == x_max is illegal input. To avoid division by 0, return value is set to y_min
+15468  -300 15174 15468  -250  -300	// 

@@ -13,8 +13,6 @@
 #define Util_Min(a,b) ((a)<(b) ? (a):(b))
 #define Util_Max(a,b) ((a)>(b) ? (a):(b))
 
-#define MULTIPLIER (4096)
-
 #define TIMER_ZERO     0
 #define TIMER_RUNNING  1
 #define TIMER_FINISHED 2

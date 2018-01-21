@@ -22,7 +22,7 @@ static const int16_t NTC3950_TempArr[] = { -400, -350, -300, -250, -200, -150, -
 void UnitTest_Util_Interpolate(void)
 {
   int32_t result;
-  uint16_t ADC_Val[] = { 16000, 15880, 15879, 12000, 9578, 7468, 5123, 555, 554, 500 };
+  uint16_t ADC_Val[] = { 16000, 15880, 15879, 15174, 9987, 7468, 5123, 555, 554, 500 };
   int16_t Temperature[] = { -450, -400, -399, 31, 173, 292, 443, 1249, 1250, 1251 };
 
   fprintf(fp, "SignalList:\n");
@@ -205,6 +205,15 @@ void UnitTest_Util_Map(void)
   x_max = 600;
   y = Util_Map(x, x_min, x_max, y_min, y_max);
   PRINT_RESULT("x_min == x_max is illegal input. To avoid division by 0, return value is set to y_min");
+
+  x_min = 15174;
+  x_max = 15468;
+  y_min = -250;
+  y_max = -300;
+
+  x = x_max;
+  y = Util_Map(x, x_min, x_max, y_min, y_max);
+  PRINT_RESULT("");
 }
 
 

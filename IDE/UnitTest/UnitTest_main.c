@@ -67,7 +67,7 @@ int main()
   
   UnitTest_RadioReceive();
 
-  UnitTest_FlashE2p();
+  UnitTest_TestCaseWrapper("TC_FlashE2p.txt", UnitTest_FlashE2p);
 
   UnitTest_TestCaseWrapper("TC_Util_SRLatch.txt", UnitTest_Util_SRLatch);
 

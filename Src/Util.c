@@ -12,6 +12,8 @@
 #include "Util.h"
 #include <stdlib.h>
 
+#define MULTIPLIER (4096)
+
 // Reset dominant SR latch. Toggled is True when state changes, i.e. for one tick.
 bool Util_SetSRLatchState(Util_SRLatch *latch, bool Set, bool Reset)
 {
@@ -40,41 +42,30 @@ int32_t Util_Interpolate(int32_t x, const int16_t Xaxis[], const int16_t Yaxis[]
     i_xMin = maxIndex;
   }
     
-  // Check if x is at the boundary and if so return max/min value
- // if (x == Xaxis[i_xMin]) {
- //   return Yaxis[i_xMin];
- // }
- // else if (x == Xaxis[i_xMax]) {
- //   return Yaxis[i_xMax];
-//  }
-//  else 
-  {
-    /* Binary Search.  i_xMax is the index for the larger x value. Thus if Xaxis is decreasing i_xMax < i_XxMin */
-    Idx = maxIndex / 2;
+  /* Binary Search.  i_xMax is the index for the larger x value. Thus if Xaxis is decreasing i_xMax < i_XxMin */
+  Idx = maxIndex / 2;
   
-    while (abs(i_xMax - i_xMin) > 1) 
-    {
-      if (x < Xaxis[Idx]) {
-        i_xMax = Idx;
-      }
-      else {
-        i_xMin = Idx;
-      }
-
-      Idx = (i_xMax + i_xMin) / 2;
+  while (abs(i_xMax - i_xMin) > 1) 
+  {
+    if (x < Xaxis[Idx]) {
+      i_xMax = Idx;
+    }
+    else {
+      i_xMin = Idx;
     }
 
-    // Maybe Add Division by zero check here or assert.
-
-    frac = MULTIPLIER*(x - Xaxis[i_xMin]) / (Xaxis[i_xMax] - Xaxis[i_xMin]);  // Fixed point calculation
+    Idx = (i_xMax + i_xMin) / 2;
   }
 
-  return ((MULTIPLIER - frac)*Yaxis[i_xMin] + frac*Yaxis[i_xMax] /*+ MULTIPLIER/2*/) / MULTIPLIER; // + MULTIPLIER/2 to get correct rounding
+  // Maybe Add Division by zero check here or assert.
+
+  frac = MULTIPLIER*(x - Xaxis[i_xMin]) / (Xaxis[i_xMax] - Xaxis[i_xMin]);  // Fixed point calculation
+
+  return ((MULTIPLIER - frac)*Yaxis[i_xMin] + frac*Yaxis[i_xMax]) / MULTIPLIER;
 }
 
 
-// Remaps a number from one range to another, it does NOT constrain values to within the range.
-// (x_max - x_min)/2 is added to get correct rounding, (equal to adding 0.5) 
+// Remaps a number from one range to another, it does NOT constrain values to within the range. 
 // Example: newVal = map(val, 0, 1023, 128, 255), maps the value from range [0, 1023] to [128, 255]
 int32_t Util_Map(int32_t x, int32_t x_min, int32_t x_max, int32_t y_min, int32_t y_max)
 {
@@ -84,10 +75,9 @@ int32_t Util_Map(int32_t x, int32_t x_min, int32_t x_max, int32_t y_min, int32_t
   }
   else
   {
-    int32_t y = ((x - x_min) * (y_max - y_min) + (x_max - x_min) / 2) / (x_max - x_min) + y_min;
+    int32_t y = ((x - x_min) * (y_max - y_min)) / (x_max - x_min) + y_min;
     return y;
   }
-  
 }
 
 // Timer object, updates a timer. Shall be called periodically. Output is TRUE when timer has finished. 
