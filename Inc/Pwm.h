@@ -6,8 +6,6 @@
 #include "ProjectDefs.h"
 
 #define  PWM_MAX_DUTY       (uint32_t)(1000)             
-#define  PULSE1_VALUE       (uint32_t)(PWM_MAX_DUTY)     /* Capture Compare 1 Value  */
-#define  PULSE4_VALUE       (uint32_t)(PWM_MAX_DUTY*12/100) /* Capture Compare 4 Value  */
 
 
 extern void Pwm_Init(void);

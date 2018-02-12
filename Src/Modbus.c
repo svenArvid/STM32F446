@@ -169,7 +169,7 @@ void Modbus_StateMachine(void)
     {
       if (Modbus_ValidRequest(BytesReceived))
       {
-        HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
+        //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
         Uart_StopReceiver(&ModbusPort);
         State = MODBUS_TX_SENDING;
         

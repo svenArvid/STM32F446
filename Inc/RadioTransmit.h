@@ -26,7 +26,7 @@ typedef struct {
   bool    PendingRequest;
 } TSS320_MsgStruct;
 
-/* External outputs (root outports fed by signals with auto storage) */
+
 typedef struct {
   bool HeatControlAck;        // Acknowledgement signal to Heat Control client
   bool TempLoggerAck;

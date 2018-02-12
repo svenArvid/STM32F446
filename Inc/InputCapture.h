@@ -41,7 +41,6 @@ uint32_t InputCapture_GetCurrentTime(void);
 
 /**
  * for the given Input capture object, period time  i.e. time between positive edges is updated.
- * It uses a 32 bit timer value to be able to measure longer times than ECT wrap around time, (which is 0.42 sec with prescaler=0xFF.)
  */
 void InputCapture_UpdatePeriod(InputCapture_t *Ic, const uint16_t FreqTimeout);
 /**

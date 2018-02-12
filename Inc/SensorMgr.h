@@ -22,9 +22,7 @@ typedef struct {
   uint8_t Type;
 } TempSensor;
 
-
 extern TempSensor RoomTempSnsr;
-
 
 extern void SensorMgr_20ms(void);
 

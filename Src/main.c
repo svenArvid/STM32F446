@@ -105,7 +105,7 @@ static void Main_Init(void)
   MotorDriver_Init();
 }
 
-static Main_PrintToTerminal(void)
+static void Main_PrintToTerminal(void)
 {
   FlashE2p_PrintToTerminal();
   Uart_PrintToTerminal();
@@ -126,14 +126,8 @@ static void Loop4ms(void)
 }
 
 static void Loop20ms(void)
-{
-  static bool TimeToToggle = FALSE;
-
-  TimeToToggle = !TimeToToggle;
-  if(TimeToToggle)
-  {
-    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);  // To get half blink frequency
-  }
+{  
+  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0); 
 
   Pwm_20ms();
 

@@ -240,7 +240,6 @@ static void TSS320_MakeWaveform(const TSS320_MsgStruct *Msg)
 
   /* Temperature, remaining 11 bits (remove sign bit) */
   Message |= (uint32_t)(abs(Msg->Temperature) & 0x7FF) << 8;
-  //Message |= (uint32_t)(RoomTempSnsr.ADCVal >> 4 ) << 8;
 
   /* Humidity, 8 least significant bits */
   Message |= (uint32_t)Msg->Humidity;

@@ -26,10 +26,7 @@ static uint32_t PulseLengths[RX_BUF_SIZE];
 
 static TSS320_MsgStruct Rx_TSS320;
 
-/**
-* @brief  This function 
 
-*/
 void RadioReceive_Init(void)
 {
   ;
@@ -96,8 +93,6 @@ static bool TSS320_CheckMessage(uint32_t SilenceIndx, TSS320_MsgStruct *Msg)
 
   if (TempChecksum == Crc_CalcCrc8(ByteArr, 4))
   { 
-    //int32_t StrLength;
-
     Msg->DeviceID = (TempMessage >> 28) & 0x0F;        // Device ID, 4 bits
     Msg->Battery = Util_BitRead(TempMessage, 27);
     Msg->Channel = ((TempMessage >> 24) & 0x07) + 1;  // Channel, 3 bits, add 1 to make it 1-based
@@ -106,12 +101,6 @@ static bool TSS320_CheckMessage(uint32_t SilenceIndx, TSS320_MsgStruct *Msg)
     Msg->Temperature = (TempMessage >> 8) & 0x7FF;   // Temperature, 11 bits
     Msg->Temperature = Util_BitRead(TempMessage, 19) ? -Msg->Temperature : Msg->Temperature;  // Get right sign of temperature
     Msg->Humidity = TempMessage & 0xFF;           // Humidity, 8 least significant bits
-
-    //StrLength = sprintf(USART3_TxBuff, "TSS320 Temp: %d, humidity: %d, channel: %d\n", Msg->Temperature, Msg->Humidity, Msg->Channel);
-
-   // Print to Terminal
-   //HAL_UART_DMAStop(&USART3Handle);
-   //HAL_UART_Transmit_DMA(&USART3Handle, USART3_TxBuff, StrLength);
 
     return TRUE;
   }
@@ -152,18 +141,6 @@ static void RadioReceiver_CheckBuffer(void)
       PulseLengths[--PulseIndx] = PulseLen;
     }
   }
-  /*
-  // DEBUG Printing
-  StrLength += sprintf(USART3_TxBuff + StrLength, "%ld {", Timer5Handle.Instance->CCMR1);
-  for (int j = 0; j < RX_BUF_SIZE; j++) {
-    StrLength += sprintf(USART3_TxBuff + StrLength, "%ld,", PulseLengths[j]);
-  }
-  StrLength += sprintf(USART3_TxBuff + StrLength, "}\n\n");
-
-  // Print to Terminal
-  HAL_UART_DMAStop(&USART3Handle);
-  HAL_UART_Transmit_DMA(&USART3Handle, USART3_TxBuff, StrLength);
-  */
 
   // ------ PART II ------
   // Search in PulseLengths for pulses that are longer than threshhold value and thus are candidates for the silence that appear immediately after a received message.
@@ -200,7 +177,6 @@ void RadioReceieve_100ms(void)
 */
 void TIM5_IRQHandler(void)
 {  
-
   // TIM 5 Input Capture interrupt on Channel 1
   if (__HAL_TIM_GET_FLAG(&Timer5Handle, TIM_SR_CC1IF) != RESET)
   {
