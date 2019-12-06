@@ -21,7 +21,6 @@
 
 
 /* UART handler declaration */
-//UART_HandleTypeDef USART3Handle;
 
 /* Buffers */
 uint8_t USART3_TxBuff[USART3_BUFF_SIZE] = { 0 };
