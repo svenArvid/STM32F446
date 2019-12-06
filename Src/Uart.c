@@ -21,7 +21,7 @@
 
 
 /* UART handler declaration */
-UART_HandleTypeDef USART3Handle;
+//UART_HandleTypeDef USART3Handle;
 
 /* Buffers */
 uint8_t USART3_TxBuff[USART3_BUFF_SIZE] = { 0 };
@@ -30,9 +30,8 @@ uint8_t USART3_RxBuff[USART3_BUFF_SIZE] = { 0 };
 uint8_t USART6_TxBuff[USART6_BUFF_SIZE] = { 0 };
 uint8_t USART6_RxBuff[USART6_BUFF_SIZE] = { 0 };
 
-uint16_t USART3_TxBuffIndex = 0;
-
 UartPort ModbusPort;
+UartPort TerminalPort;
 
 static void Uart_InitHW(void);
 
@@ -89,26 +88,27 @@ void Uart_Init(void)
 {
   /*##-1- Configure the U(S)ART peripheral ######################################*/
   /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
-  
+  /*
   USART3Handle.Instance = USART3;
   USART3Handle.Init.BaudRate = 115200;
   USART3Handle.Init.WordLength = UART_WORDLENGTH_8B;
   USART3Handle.Init.StopBits = UART_STOPBITS_1;
   USART3Handle.Init.Parity = UART_PARITY_NONE; //UART_PARITY_ODD;
   USART3Handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  USART3Handle.Init.Mode = UART_MODE_TX;
+  USART3Handle.Init.Mode = UART_MODE_TX_RX;
   USART3Handle.Init.OverSampling = UART_OVERSAMPLING_16;
-
+  */
   ModbusPort.Rx.Buffer = USART6_RxBuff;
   ModbusPort.Rx.Size = USART6_BUFF_SIZE;
   ModbusPort.Tx.Buffer = USART6_TxBuff;
   ModbusPort.Tx.Size = USART6_BUFF_SIZE;
 
+  TerminalPort.Rx.Buffer = USART3_RxBuff;
+  TerminalPort.Rx.Size = USART3_BUFF_SIZE;
+  TerminalPort.Tx.Buffer = USART3_TxBuff;
+  TerminalPort.Tx.Size = USART3_BUFF_SIZE;
+
   Uart_InitHW();
-  
-  if (HAL_UART_Init(&USART3Handle) != HAL_OK) { // Initialization Error 
-    Error_Handler(); 
-  }
   
   //(void)HAL_HalfDuplex_Init(&USART3Handle);
 
@@ -125,7 +125,7 @@ static void Uart_InitHW(void)
 {
   GPIO_InitTypeDef  GPIO_InitStruct;
 
-  static DMA_HandleTypeDef  hdmatx_usart3;
+  static DMA_HandleTypeDef  hdmatx_usart3, hdmarx_usart3;
 
   /*##-1- Enable peripherals and GPIO Clocks #################################*/
   /* Enable GPIO TX/RX clock */
@@ -147,7 +147,7 @@ static void Uart_InitHW(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
-  GPIO_InitStruct.Pin = GPIO_PIN_8 /* |  GPIO_PIN_9 */;
+  GPIO_InitStruct.Pin = GPIO_PIN_8 |  GPIO_PIN_9;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   // USART6 TX GPIO pin configuration. TX on Pin 14 and RX on Pin 9.
@@ -159,7 +159,6 @@ static void Uart_InitHW(void)
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
   //##-3- Configure ModbusPort: USART 6, Rx using DMA2 Stream 1 (channel 5) and Tx using DMA2 Stream 7 (channel 5) ##
-  //## Start (enable) receiver now but NOT transmitter
   uint32_t BaudRate = 9600;
 
   ModbusPort.Usart = USART6;
@@ -175,13 +174,12 @@ static void Uart_InitHW(void)
   // ------ Rx Stream ------
   ModbusPort.DMAStream_Rx->CR &= ~DMA_SxCR_EN;      // Make sure stream is disabled before writing to it's registers
   DMA_ClearAllFlags(ModbusPort.DMAStream_Rx);
-
   ModbusPort.DMAStream_Rx->PAR = (uint32_t)&(ModbusPort.Usart->DR);
   ModbusPort.DMAStream_Rx->M0AR = (uint32_t)ModbusPort.Rx.Buffer;
   ModbusPort.DMAStream_Rx->NDTR = ModbusPort.Rx.Size;
   // Reg. M1AR   Not used
   // Reg. FCR    Keep at reset val
-  ModbusPort.DMAStream_Rx->CR = DMA_CHANNEL_5 | DMA_PRIORITY_VERY_HIGH | DMA_MINC_ENABLE /*| DMA_IT_TC | DMA_IT_TE | DMA_IT_DME*/;
+  ModbusPort.DMAStream_Rx->CR = DMA_CHANNEL_5 | DMA_PRIORITY_VERY_HIGH | DMA_MINC_ENABLE | DMA_PERIPH_TO_MEMORY /*| DMA_IT_TC | DMA_IT_TE | DMA_IT_DME*/;
 
   ModbusPort.DMAStream_Rx->CR |= DMA_SxCR_EN;    // Enable Rx stream    
 
@@ -197,7 +195,43 @@ static void Uart_InitHW(void)
   ModbusPort.DMAStream_Tx->CR = DMA_CHANNEL_5 | DMA_PRIORITY_VERY_HIGH | DMA_MINC_ENABLE | DMA_MEMORY_TO_PERIPH;
 
 
-  //##-4a- Configure the DMA stream for USART3 TX ##########################################
+  //##-4- Configure TerminalPort: USART 3, Rx using DMA1 Stream 1 (channel 4) and Tx using DMA1 Stream 3 (channel 4) ##
+  BaudRate = 115200;
+
+  TerminalPort.Usart = USART3;
+  TerminalPort.DMAStream_Rx = DMA1_Stream1;
+  TerminalPort.DMAStream_Tx = DMA1_Stream3;
+
+  TerminalPort.Usart->BRR = UART_BRR_SAMPLING16(HAL_RCC_GetPCLK1Freq(), BaudRate);  // USART3 uses APB2 bus ???
+  TerminalPort.Usart->CR2 = 0x0;
+  TerminalPort.Usart->CR3 = USART_CR3_DMAR;
+  TerminalPort.Usart->CR1 = USART_CR1_UE | USART_CR1_RE; /* | USART_CR1_TE */
+  // Reg. GTPR  Keep at reset val
+
+  // ------ Rx Stream ------
+  TerminalPort.DMAStream_Rx->CR &= ~DMA_SxCR_EN;      // Make sure stream is disabled before writing to it's registers
+  DMA_ClearAllFlags(TerminalPort.DMAStream_Rx);
+
+  TerminalPort.DMAStream_Rx->PAR = (uint32_t)&(TerminalPort.Usart->DR);
+  TerminalPort.DMAStream_Rx->M0AR = (uint32_t)TerminalPort.Rx.Buffer;
+  TerminalPort.DMAStream_Rx->NDTR = TerminalPort.Rx.Size;
+  // Reg. M1AR   Not used
+  // Reg. FCR    Keep at reset val
+  TerminalPort.DMAStream_Rx->CR = DMA_CHANNEL_4 | DMA_PRIORITY_VERY_HIGH | DMA_MINC_ENABLE | DMA_PERIPH_TO_MEMORY /*| DMA_IT_TC | DMA_IT_TE | DMA_IT_DME*/;
+  TerminalPort.DMAStream_Rx->CR |= DMA_SxCR_EN;    // Enable Rx stream
+
+  // ------ Tx Stream ------
+  TerminalPort.DMAStream_Tx->CR &= ~DMA_SxCR_EN;      // Make sure stream is disabled before writing to it's registers
+  DMA_ClearAllFlags(TerminalPort.DMAStream_Tx);
+
+  TerminalPort.DMAStream_Tx->PAR = (uint32_t)&(TerminalPort.Usart->DR);
+  TerminalPort.DMAStream_Tx->M0AR = (uint32_t)TerminalPort.Tx.Buffer;
+  TerminalPort.DMAStream_Tx->NDTR = 0;
+  // Reg. M1AR   Not used
+  // Reg. FCR    Keep at reset val
+  TerminalPort.DMAStream_Tx->CR = DMA_CHANNEL_4 | DMA_PRIORITY_VERY_HIGH | DMA_MINC_ENABLE | DMA_MEMORY_TO_PERIPH;
+  
+  /*
   hdmatx_usart3.Instance = DMA1_Stream3;
   hdmatx_usart3.Init.Channel = DMA_CHANNEL_4;          // USART3_TX is on stream 3, channel 4
   hdmatx_usart3.Init.Direction = DMA_MEMORY_TO_PERIPH;
@@ -216,27 +250,6 @@ static void Uart_InitHW(void)
 
   // Associate the initialized DMA handle to the Usart handle 
   __HAL_LINKDMA(&USART3Handle, hdmatx, hdmatx_usart3);
-
-  /*
-  //##-4b- Configure the DMA stream for USART3 RX ##########################################
-  hdmarx_usart3.Instance = DMA1_Stream1;
-  hdmarx_usart3.Init.Channel = DMA_CHANNEL_4;          // USART3_RX is on stream 1, channel 4
-  hdmarx_usart3.Init.Direction = DMA_PERIPH_TO_MEMORY;
-  hdmarx_usart3.Init.PeriphInc = DMA_PINC_DISABLE;
-  hdmarx_usart3.Init.MemInc = DMA_MINC_ENABLE;
-  hdmarx_usart3.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-  //hdmarx_usart3.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;    // In Direct mode source and destination data widths are equal and defined by PSIZE
-  hdmarx_usart3.Init.Mode = DMA_NORMAL; //DMA_CIRCULAR;  
-  hdmarx_usart3.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-  hdmarx_usart3.Init.FIFOMode = DMA_FIFOMODE_DISABLE;             // i.e. Direct mode 
-  hdmarx_usart3.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_HALFFULL; // Dont think this matters since Direct Mode is used
-  hdmarx_usart3.Init.MemBurst = DMA_MBURST_SINGLE;                // Burst transfers are not possible in Direct mode
-  hdmarx_usart3.Init.PeriphBurst = DMA_PBURST_SINGLE;
-  
-  HAL_DMA_Init(&hdmarx_usart3);
-
-  // Associate the initialized DMA handle to the Usart handle 
-  __HAL_LINKDMA(&USART3Handle, hdmarx, hdmarx_usart3);
   */
 }
 
@@ -300,7 +313,7 @@ void Uart_StopTransmitter(UartPort *Port)
   Port->Usart->CR1 &= ~USART_CR1_TE;
 }
 
-// (Re)starts the Transmitter and DMA stream
+// (Re)starts the Transmitter and DMA stream if BytesToSend > 0
 void Uart_StartTransmitter(UartPort *Port, uint16_t BytesToSend)
 {
   if (BytesToSend > 0)                           // Is there anything to transmit?
@@ -326,7 +339,7 @@ static void Uart_TestUart(void)
     Uart_StopReceiver(&ModbusPort);
 
     // Check message
-    Uart_PrintToTerminal();
+    Uart_PrintRegisters();
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
 
     // Print to Terminal
@@ -357,7 +370,7 @@ void Uart_20ms(void)
   //Uart_TestUart();
 }
 
-void Uart_PrintToTerminal(void)
+void Uart_PrintRegisters(void)
 {  
   UART_PRINTF("\r\nUSART6:\r\n");
   UART_PRINTF("SR:  %X\r\n", USART6->SR);
@@ -382,15 +395,14 @@ void Uart_PrintToTerminal(void)
 // Call this function to print out the data stored in the Terminal Buffer
 void Uart_TransmitTerminalBuffer(void)
 {
-  if (USART3_TxBuffIndex > 0)  // Is there anything to transmit?
+  if (Uart_TransmissionComplete(&TerminalPort))    // Check if (previous) Transmission is complete
   {
-    if (__HAL_UART_GET_FLAG(&USART3Handle, UART_FLAG_TC))    // Check if (previous) Transmission is complete
-    {
-      USART3Handle.gState = HAL_UART_STATE_READY;
-      USART3Handle.hdmatx->State = HAL_DMA_STATE_READY;
-      __HAL_UNLOCK(USART3Handle.hdmatx);
-      HAL_UART_Transmit_DMA(&USART3Handle, USART3_TxBuff, USART3_TxBuffIndex);
-      USART3_TxBuffIndex = 0;
-    }
+    Uart_StartTransmitter(&TerminalPort, TerminalPort.Tx.Indx);
+    TerminalPort.Tx.Indx = 0;
   }
+}
+
+bool Uart_TerminalBufferEmpty(void)
+{
+  return TerminalPort.Tx.Indx == 0;
 }

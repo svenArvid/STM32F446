@@ -75,7 +75,10 @@ int main()
 
   UnitTest_TestCaseWrapper("TC_Util_Interpolate.txt", UnitTest_Util_Interpolate);
 
+  UnitTest_TestCaseWrapper("TC_Util_Interpolate2D.txt", UnitTest_Util_Interpolate2D);
+
   UnitTest_TestCaseWrapper("TC_Util_Map.txt", UnitTest_Util_Map);
 
+  printf("Floating: %.1f", 45.0);
   system("pause");
 }

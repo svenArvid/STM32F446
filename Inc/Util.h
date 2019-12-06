@@ -42,6 +42,7 @@ typedef struct {
 extern int32_t Util_SetRampState(Util_Ramp* ramp, int32_t Input);
 extern bool Util_SetSRLatchState(Util_SRLatch *latch, bool Set, bool Reset);
 extern int32_t Util_Interpolate(int32_t x, const int16_t Xaxis[], const int16_t Yaxis[], uint32_t arrayLen);
+extern int32_t Util_Interpolate2D(int32_t x, int32_t y, const int16_t Xaxis[], const int16_t Yaxis[], int16_t map[], uint32_t xArrayLen, uint32_t yArrayLen);
 
 extern int32_t Util_Map(int32_t x, int32_t x_min, int32_t x_max, int32_t y_min, int32_t y_max);
 extern bool Util_SetTimerState(Util_Timer* timer, bool Start, bool Reset);

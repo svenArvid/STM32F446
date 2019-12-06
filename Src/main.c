@@ -26,6 +26,7 @@
 #include "RadioReceive.h"
 #include "FlashE2p.h"
 #include "Modbus.h"
+#include "Rtc.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -94,6 +95,7 @@ static void Main_Init(void)
 
   Uart_Init();
   FlashE2p_Init();
+  RTC_Init();
 
   InputCapture_Init();
   Pwm_Init();
@@ -107,11 +109,31 @@ static void Main_Init(void)
 
 static void Main_PrintToTerminal(void)
 {
-  FlashE2p_PrintToTerminal();
-  Uart_PrintToTerminal();
+	static int16_t indx = 0;
+  char timeBuff[20], dateBuff[20];
 
-  // Start transmission to Terminal
-  Uart_TransmitTerminalBuffer();
+  switch (indx)
+  {
+  case 0:
+    FlashE2p_PrintParameters();
+    indx++;
+    break;
+
+  case 1:
+    Uart_PrintRegisters();
+    RTC_CalendarShow(&timeBuff, &dateBuff);
+    UART_PRINTF("RTC: %s %s\r\n", dateBuff, timeBuff);
+    indx++;
+    break;
+
+  default:
+    break;
+  }
+
+  if (!Uart_TerminalBufferEmpty()) {
+    UART_PRINTF("Time %.1f\r\n", HAL_GetTick() / 1000.0);
+    Uart_TransmitTerminalBuffer();    // Start transmission to Terminal
+  }
 }
 
 static void Loop1ms(void)
@@ -127,7 +149,7 @@ static void Loop4ms(void)
 
 static void Loop20ms(void)
 {  
-  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0); 
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 
   Pwm_20ms();
 
@@ -146,7 +168,7 @@ static void Loop20ms(void)
 
 static void Loop100ms(void)
 {
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, !HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7));
+  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, !HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7));
 
   RadioTransmit_100ms();
 
@@ -158,7 +180,7 @@ static void Loop100ms(void)
 
 static void Loop500ms(void)
 {
-  //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
+  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
 
   Pwm_500ms();
 
@@ -166,7 +188,7 @@ static void Loop500ms(void)
 
   FlashE2p_500ms();
 
-  Uart_TransmitTerminalBuffer();
+  Main_PrintToTerminal();
 }
 
 /**
@@ -193,7 +215,7 @@ int main(void)
   
   Main_Init();
 
-  Main_PrintToTerminal();    // Should be executed immediately after initialization
+  Uart_TransmitTerminalBuffer();    // Should be executed immediately after initialization    
   // Init functions finished
     
 

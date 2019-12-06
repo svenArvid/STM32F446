@@ -5,14 +5,23 @@
 #include "ProjectDefs.h"
 #include "stdio.h"
 
-#define USART3_BUFF_SIZE  2048
+#define USART3_BUFF_SIZE  1024
+#define USART3_BUFF_END_INDX  (USART3_BUFF_SIZE - 16)  
 #define USART6_BUFF_SIZE  1024
 
-#define UART_PRINTF(...)  { USART3_TxBuffIndex += sprintf(USART3_TxBuff + USART3_TxBuffIndex, __VA_ARGS__); }
+#define UART_PRINTF(...)  \
+do { \
+  if ( TerminalPort.Tx.Indx < USART3_BUFF_END_INDX ) { \
+    TerminalPort.Tx.Indx += snprintf(TerminalPort.Tx.Buffer + TerminalPort.Tx.Indx, (USART3_BUFF_END_INDX - TerminalPort.Tx.Indx), __VA_ARGS__); \
+    if ( TerminalPort.Tx.Indx >= USART3_BUFF_END_INDX ) \
+      TerminalPort.Tx.Indx += snprintf(TerminalPort.Tx.Buffer + TerminalPort.Tx.Indx, 16, "\r\nBUFFER_FULL\r\n"); \
+  } \
+} while (0)
 
 typedef struct {
   uint8_t  *Buffer;
   uint16_t Size;
+  uint16_t Indx;
 } Buffer_t;
 
 typedef struct {
@@ -23,13 +32,8 @@ typedef struct {
   Buffer_t Tx;
 } UartPort;
 
-UART_HandleTypeDef USART3Handle;
 
-uint8_t USART3_TxBuff[USART3_BUFF_SIZE];
-uint8_t USART6_TxBuff[USART6_BUFF_SIZE];
-
-uint16_t USART3_TxBuffIndex;
-
+UartPort TerminalPort;
 UartPort ModbusPort;
 
 void Uart_Init(void);
@@ -43,6 +47,7 @@ void Uart_StopTransmitter(UartPort *Port);
 void Uart_StartTransmitter(UartPort *Port, uint16_t BytesToSend);
 
 void Uart_TransmitTerminalBuffer(void);
-void Uart_PrintToTerminal(void);
+bool Uart_TerminalBufferEmpty(void);
+void Uart_PrintRegisters(void);
 
 #endif // __UART_H

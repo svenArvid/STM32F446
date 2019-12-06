@@ -59,7 +59,7 @@ extern HAL_StatusTypeDef FlashE2p_EraseSector(FlashSector *Sector);
 extern void FlashE2p_InitSector(FlashSector *Sector);
 extern void FlashE2p_Init(void);
 extern void FlashE2p_500ms(void);
-extern void FlashE2p_PrintToTerminal(void);
+extern void FlashE2p_PrintParameters(void);
 
 extern bool FlashE2p_ReadSynchBit(uint16_t E2pIndex);
 extern void FlashE2p_WriteSynchBit(uint16_t E2pIndex, bool BitVal);

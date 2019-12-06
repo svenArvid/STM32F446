@@ -1,0 +1,7 @@
+TC_Util_Interpolate2D
+SignalList:
+   X      Y      Z      
+--------------------------------------
+ 
+Testing 3 x 2 array
+    40     30    350	 // 

@@ -77,8 +77,9 @@ static HAL_StatusTypeDef FlashE2p_ProgramWord(FlashSector *pSector, uint16_t E2p
     Word = Data << 16;    // Little endian so put data in High bytes since Least sign. byte first i.e. E2pIndex will be placed at lowest address. 
     Word |= E2pIndex;
 
-    FlashStatus = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, pSector->NextWriteAddress, Word);    // Maybe add handling of FlashStatus ?
+    FlashStatus = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, pSector->NextWriteAddress, Word);    // TODO: Maybe add handling of FlashStatus ?
     FlashE2p_WriteSynchBit(E2pIndex, TRUE);
+    UART_PRINTF("Updated Eeprom param %d to %d\r\n", E2pIndex, Data);
     
     pSector->NextWriteAddress += 4;
   }
@@ -223,7 +224,7 @@ void FlashE2p_Init(void)
 }
 
 // Print the parameters to Terminal
-void FlashE2p_PrintToTerminal(void)
+void FlashE2p_PrintParameters(void)
 {
   uint32_t indx;
 

@@ -24,6 +24,7 @@ void UnitTest_CrcCalcCrc8(void);
 void UnitTest_Crc_CalcCrc16(void);
 
 void UnitTest_Util_Interpolate(void);
+void UnitTest_Util_Interpolate2D(void);
 void UnitTest_Util_SRLatch(void);
 void UnitTest_Util_FilterState(void);
 void UnitTest_Util_Map(void);

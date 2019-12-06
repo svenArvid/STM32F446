@@ -55,6 +55,29 @@ void UnitTest_Util_Interpolate(void)
 }
 
 //-----------------------------------------------------------------------
+
+static int16_t xAxis[] = { 10, 20, 40};
+static int16_t yAxis[] = { 10, 30 };
+static int16_t zMap[] = { 50,25, 150,120, 400,350 };
+static int16_t* ps[3];
+
+#define PRINT_RESULT(x, y, z, comment) fprintf(fp, "%6d %6d %6d	 // %s\n", x, y, z, comment);
+void UnitTest_Util_Interpolate2D(void)
+{
+	int32_t x, y, z;
+	
+	fprintf(fp, "SignalList:\n");
+	fprintf(fp, "   X      Y      Z      \n--------------------------------------\n");
+
+	fprintf(fp, " \nTesting 3 x 2 array\n");
+	x = 40;
+	y = 30;
+	z = Util_Interpolate2D(x, y, xAxis, yAxis, zMap, 3, 2);
+	PRINT_RESULT(x, y, z, "");
+	
+}
+
+//-----------------------------------------------------------------------
 Util_SRLatch latch;
 
 #define PRINT_RESULT(comment) fprintf(fp, "%3d %3d %3d %3d		// %s\n", Set, Reset, latch.State, latch.Toggled, comment);

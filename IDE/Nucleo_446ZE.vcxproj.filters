@@ -293,6 +293,9 @@
     <ClCompile Include="..\Src\ExportedSignals.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\Rtc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Inc\Adc.h">
@@ -356,6 +359,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Inc\ExportedSignals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\Rtc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
