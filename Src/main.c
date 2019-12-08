@@ -27,6 +27,7 @@
 #include "FlashE2p.h"
 #include "Modbus.h"
 #include "Rtc.h"
+#include "Usb.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,6 +50,7 @@ static volatile bool Pending4ms = FALSE;
 static volatile bool Pending20ms = FALSE;
 static volatile bool Pending100ms = FALSE;
 static volatile bool Pending500ms = FALSE;
+static volatile bool InitDone = FALSE;
 
 static void Loop1ms(void);
 
@@ -56,7 +58,12 @@ static void Loop1ms(void);
 void HAL_IncTick(void)  
 {
   uwTick++;
-  LoopCnt++;
+  
+  if (InitDone)
+  {
+    LoopCnt++;
+    Loop1ms();              // The 1 ms loop executes in the interrupt, but the slower loops run in the main loop.
+  }
 
   if (!(LoopCnt % 4))
   {
@@ -75,8 +82,6 @@ void HAL_IncTick(void)
       }
     }
   }
-
-  Loop1ms();              // The 1 ms loop executes in the interrupt, but the slower loops run in the main loop.
 }
 
 //----------------------------------------
@@ -94,6 +99,8 @@ static void Main_Init(void)
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   Uart_Init();
+  UART_PRINTF("\r\nUart_Init()\r\n");
+  
   FlashE2p_Init();
   RTC_Init();
 
@@ -105,6 +112,8 @@ static void Main_Init(void)
 
   SpeedSensor_Init();
   MotorDriver_Init();
+  
+  Usb_Init();
 }
 
 static void Main_PrintToTerminal(void)
@@ -149,7 +158,7 @@ static void Loop4ms(void)
 
 static void Loop20ms(void)
 {  
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 
   Pwm_20ms();
 
@@ -184,9 +193,11 @@ static void Loop500ms(void)
 
   Pwm_500ms();
 
-  Adc_500ms();
+  //Adc_500ms();
 
   FlashE2p_500ms();
+
+  Usb_500ms();
 
   Main_PrintToTerminal();
 }
@@ -215,9 +226,11 @@ int main(void)
   
   Main_Init();
 
+  UART_PRINTF("Init Done. Tick: %d\r\n", HAL_GetTick());
   Uart_TransmitTerminalBuffer();    // Should be executed immediately after initialization    
+  
   // Init functions finished
-    
+  InitDone = TRUE;
 
   while (1)
   {
@@ -262,6 +275,10 @@ int main(void)
   *            VDD(V)                         = 3.3
   *            Main regulator output voltage  = Scale1 mode
   *            Flash Latency(WS)              = 5
+  *         The USB clock configuration from PLLI2S:
+  *            PLLI2SM                        = 8
+  *            PLLI2SN                        = 192
+  *            PLLI2SQ                        = 4
   * @param  None
   * @retval None
   */
@@ -269,6 +286,7 @@ static void SystemClock_Config(void)
 {
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
   RCC_OscInitTypeDef RCC_OscInitStruct;
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
   HAL_StatusTypeDef ret = HAL_OK;
 
   /* Enable Power Control clock */
@@ -289,12 +307,7 @@ static void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   RCC_OscInitStruct.PLL.PLLR = 2;
-  
   ret = HAL_RCC_OscConfig(&RCC_OscInitStruct);
-  if(ret != HAL_OK)
-  {
-    while(1) { ; }
-  }
   
   /* Activate the OverDrive to reach the 180 MHz Frequency */  
   ret = HAL_PWREx_EnableOverDrive();
@@ -302,7 +315,15 @@ static void SystemClock_Config(void)
   {
     while(1) { ; }
   }
-  
+ 
+  /* Select PLLSAI output as USB clock source */
+  PeriphClkInitStruct.PLLSAI.PLLSAIM = 8;
+  PeriphClkInitStruct.PLLSAI.PLLSAIN = 384;
+  PeriphClkInitStruct.PLLSAI.PLLSAIP = RCC_PLLSAIP_DIV8;
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_CK48;
+  PeriphClkInitStruct.Clk48ClockSelection = RCC_CK48CLKSOURCE_PLLSAIP;
+  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
+
   /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 clocks dividers */
   RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;

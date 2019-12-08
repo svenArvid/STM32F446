@@ -28,7 +28,7 @@ const tE2pDefault E2pDefault[E2P_NUM_PARAMETERS] =
   { 0, 1000,    E2P_DEFAULT(150,        E2P_ECR_RPM_LEVER_MIN_A)       }, 
   { 0, 2500,    E2P_DEFAULT(350,        E2P_CLUTCH_SPRING_PRESSURE)    }, 
   { 0, 2500,    E2P_DEFAULT(700,        E2P_CLUTCH_IN_PRE_PRESSURE)    }, 
-  { 0, 2,       E2P_DEFAULT(1,          E2P_NEO_PIXEL_APP)             },
+  { 0, 2,       E2P_DEFAULT(0,          E2P_NEO_PIXEL_APP)             },
 };
 
 static int16_t E2pRamMirror[E2P_NUM_PARAMETERS];

@@ -1,6 +1,7 @@
 Port A:
   Pin 0, 3  // InputCapture.c TIM5_CH1,CH4  Note: PA1,PA2 not available on PCB     
   Pin 6     // RadioTransmit.c TIM13_CH1
+  Pin 10, 11, 12  // USB ID, USB DM & DP
 
 
 Port B: 
@@ -34,3 +35,4 @@ Port F:
 Port G:
 
   Pin 9,14         // Uart.c USART6_TX/RX  9 = RX, 14 = TX
+  Pin 6            // USB Power switch

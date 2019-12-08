@@ -186,4 +186,33 @@ void RTC_CalendarShow(char *showtime, char *showdate)
   sprintf(showdate, "%4d-%02d-%02d", 2000 + sdatestructureget.Year, sdatestructureget.Month, sdatestructureget.Date );
 }
 
+/*
+Currnet local time is returned with packed into a DWORD value.The bit field is as follows :
+
+  bit31 : 25    Year origin from the 1980 (0..127)
+  bit24 : 21    Month(1..12)
+  bit20 : 16    Day of the month(1..31)
+  bit15 : 11    Hour(0..23)
+  bit10 : 5     Minute(0..59)
+  bit4 : 0      Second / 2 (0..29)
+*/
+uint32_t RTC_GetTimeStamp(void)
+{
+  RTC_DateTypeDef sdatestructureget;
+  RTC_TimeTypeDef stimestructureget;
+  uint32_t res = 0;
+
+  HAL_RTC_GetTime(&RtcHandle, &stimestructureget, RTC_FORMAT_BIN);
+
+  HAL_RTC_GetDate(&RtcHandle, &sdatestructureget, RTC_FORMAT_BIN);
+
+  return 
+    (2000U - 1980U + sdatestructureget.Year) << 25 |
+    (uint32_t)sdatestructureget.Month << 21 |
+    (uint32_t)sdatestructureget.Date << 16 |
+    (uint32_t)stimestructureget.Hours << 11 |
+    (uint32_t)stimestructureget.Minutes << 5 |
+    (uint32_t)stimestructureget.Seconds / 2;
+}
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

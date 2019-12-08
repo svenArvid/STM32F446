@@ -12,7 +12,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ErrorHandler.h"
-#include "ProjectDefs.h"
 #include "Pwm.h"
 
 

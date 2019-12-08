@@ -41,8 +41,9 @@ _Min_Stack_Size = 0x400;; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 512K
 RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 128K
+FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 32K
+FLASH2 (rx)    : ORIGIN = 0x08010000, LENGTH = 512K - 64K  /* Note: Start at 0x08010000 i.e. reserves sector 2 & 3, so they can be used for e.g. EEPROM emulation */
 }
 
 /* Define output sections */
@@ -56,7 +57,7 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
-  /* The program code and other data goes into FLASH */
+  /* The program code and other data goes into FLASH2 */
   .text :
   {
     . = ALIGN(4);
@@ -71,44 +72,44 @@ SECTIONS
 
     . = ALIGN(4);
     _etext = .;        /* define a global symbols at end of code */
-  } >FLASH
+  } >FLASH2
 
-  /* Constant data goes into FLASH */
+  /* Constant data goes into FLASH2 */
   .rodata :
   {
     . = ALIGN(4);
     *(.rodata)         /* .rodata sections (constants, strings, etc.) */
     *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
     . = ALIGN(4);
-  } >FLASH
+  } >FLASH2
 
-  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH
+  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH2
   .ARM : {
     __exidx_start = .;
     *(.ARM.exidx*)
     __exidx_end = .;
-  } >FLASH
+  } >FLASH2
 
   .preinit_array     :
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array*))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  } >FLASH
+  } >FLASH2
   .init_array :
   {
     PROVIDE_HIDDEN (__init_array_start = .);
     KEEP (*(SORT(.init_array.*)))
     KEEP (*(.init_array*))
     PROVIDE_HIDDEN (__init_array_end = .);
-  } >FLASH
+  } >FLASH2
   .fini_array :
   {
     PROVIDE_HIDDEN (__fini_array_start = .);
     KEEP (*(SORT(.fini_array.*)))
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
-  } >FLASH
+  } >FLASH2
 
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);
@@ -123,7 +124,7 @@ SECTIONS
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
-  } >RAM AT> FLASH
+  } >RAM AT> FLASH2
 
   
   /* Uninitialized data section */

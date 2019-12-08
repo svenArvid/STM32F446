@@ -15,6 +15,9 @@
     <Filter Include="Header Files">
       <UniqueIdentifier>{8517392e-25ee-47fc-bf20-11302441af93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FatFs Source">
+      <UniqueIdentifier>{81053edc-488f-443e-8248-deb499aec73c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\main.c">
@@ -296,6 +299,24 @@
     <ClCompile Include="..\Src\Rtc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\Usb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\usbh_conf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\usbh_diskio_dma.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\diskio.c">
+      <Filter>FatFs Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\ff.c">
+      <Filter>FatFs Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\ff_gen_drv.c">
+      <Filter>FatFs Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Inc\Adc.h">
@@ -364,5 +385,40 @@
     <ClInclude Include="..\Inc\Rtc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Inc\ffconf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\usbh_conf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\usbh_diskio_dma.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\diskio.h">
+      <Filter>FatFs Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\ff.h">
+      <Filter>FatFs Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\ff_gen_drv.h">
+      <Filter>FatFs Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\ffconf_template.h">
+      <Filter>FatFs Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\integer.h">
+      <Filter>FatFs Source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\00history.txt">
+      <Filter>FatFs Source</Filter>
+    </Text>
+    <Text Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\00readme.txt">
+      <Filter>FatFs Source</Filter>
+    </Text>
+    <Text Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\st_readme.txt">
+      <Filter>FatFs Source</Filter>
+    </Text>
   </ItemGroup>
 </Project>

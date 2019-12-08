@@ -23,6 +23,8 @@
 /* UART handler declaration */
 
 /* Buffers */
+#define USART6_BUFF_SIZE  512
+
 uint8_t USART3_TxBuff[USART3_BUFF_SIZE] = { 0 };
 uint8_t USART3_RxBuff[USART3_BUFF_SIZE] = { 0 };
 

@@ -5,9 +5,8 @@
 #include "ProjectDefs.h"
 #include "stdio.h"
 
-#define USART3_BUFF_SIZE  1024
+#define USART3_BUFF_SIZE  2048
 #define USART3_BUFF_END_INDX  (USART3_BUFF_SIZE - 16)  
-#define USART6_BUFF_SIZE  1024
 
 #define UART_PRINTF(...)  \
 do { \

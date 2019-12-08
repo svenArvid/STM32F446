@@ -42,11 +42,14 @@
 #include "RadioTransmit.h"
 #include "TicToc.h"
 #include "NeoPixel.h"
+#include "Uart.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+extern HCD_HandleTypeDef hhcd;
+
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -175,6 +178,13 @@ void TIM8_UP_TIM13_IRQHandler(void)
 #ifdef TIC_TOC
   TicToc_Tim13IrqEnd = Timer2Handle.Instance->CNT;
 #endif
+}
+
+void OTG_FS_IRQHandler(void)
+{
+  //UART_PRINTF("OTG_FS_IRQ begin, Tick: %d\r\n", HAL_GetTick());
+  HAL_HCD_IRQHandler(&hhcd);
+  //UART_PRINTF("OTG_FS_IRQ end, Tick: %d\r\n", HAL_GetTick());
 }
 
 // NOTE: TIM8_TRG_COM_TIM14_IRQHandler is in NeoPixel.c
