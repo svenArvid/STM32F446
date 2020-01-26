@@ -407,3 +407,20 @@ bool Uart_TerminalBufferEmpty(void)
 {
   return TerminalPort.Tx.Indx == 0;
 }
+
+void Uart_printf(const char *SourceFilename, int SourceLineno, const char *CFormatString, ...) 
+{
+  va_list aptr;
+  Buffer_t *buff = &TerminalPort.Tx;
+  int16_t endIndx = buff->Size - 16;
+
+  va_start(aptr, CFormatString);
+  if (buff->Indx < endIndx) {
+    //buff->Indx += snprintf(buff->Buffer + buff->Indx, (endIndx - buff->Indx), "%s, line: %d  ", SourceFilename, SourceLineno);
+    buff->Indx += vsnprintf(buff->Buffer + buff->Indx, (endIndx - buff->Indx), CFormatString, aptr);
+    if (buff->Indx >= endIndx)
+      buff->Indx += snprintf(buff->Buffer + buff->Indx, 16, "\r\nBUFFER_FULL\r\n");
+  }
+  va_end(aptr);
+
+}

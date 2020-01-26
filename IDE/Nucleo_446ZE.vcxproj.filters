@@ -18,6 +18,24 @@
     <Filter Include="FatFs Source">
       <UniqueIdentifier>{81053edc-488f-443e-8248-deb499aec73c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="STM32_USB_Host_Library">
+      <UniqueIdentifier>{2e1c79a7-7622-4fd8-a9dc-3c7c15b8ece4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STM32_USB_Host_Library\Core">
+      <UniqueIdentifier>{58f9f9b9-b81c-4ec4-881d-c210e874b1e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STM32_USB_Host_Library\MSC">
+      <UniqueIdentifier>{420a8c25-329d-475b-8566-5ad23cbf6cea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LwIP">
+      <UniqueIdentifier>{2a00811a-7daf-4f22-ac31-ae9d2c50784f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LwIP\core">
+      <UniqueIdentifier>{ed2eac83-7270-4005-8a7f-09957ea145d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LwIP\core\ipv4">
+      <UniqueIdentifier>{dce78fa7-7c49-4198-9dc0-1afbf1e84d69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\main.c">
@@ -317,6 +335,117 @@
     <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\ff_gen_drv.c">
       <Filter>FatFs Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Src\usbh_conf_template.c">
+      <Filter>STM32_USB_Host_Library\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Src\usbh_core.c">
+      <Filter>STM32_USB_Host_Library\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Src\usbh_ctlreq.c">
+      <Filter>STM32_USB_Host_Library\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Src\usbh_ioreq.c">
+      <Filter>STM32_USB_Host_Library\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Src\usbh_pipes.c">
+      <Filter>STM32_USB_Host_Library\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Class\MSC\Src\usbh_msc.c">
+      <Filter>STM32_USB_Host_Library\MSC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Class\MSC\Src\usbh_msc_bot.c">
+      <Filter>STM32_USB_Host_Library\MSC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Class\MSC\Src\usbh_msc_scsi.c">
+      <Filter>STM32_USB_Host_Library\MSC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\app_ethernet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\ethernetif.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Network.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\tcp_echoserver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\autoip.c">
+      <Filter>LwIP\core\ipv4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\dhcp.c">
+      <Filter>LwIP\core\ipv4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\etharp.c">
+      <Filter>LwIP\core\ipv4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\icmp.c">
+      <Filter>LwIP\core\ipv4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\igmp.c">
+      <Filter>LwIP\core\ipv4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\ip4.c">
+      <Filter>LwIP\core\ipv4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\ip4_addr.c">
+      <Filter>LwIP\core\ipv4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\ip4_frag.c">
+      <Filter>LwIP\core\ipv4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\def.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\dns.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\inet_chksum.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\init.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ip.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\mem.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\memp.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\netif.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\pbuf.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\raw.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\stats.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\sys.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\tcp.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\tcp_in.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\tcp_out.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\timeouts.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\udp.c">
+      <Filter>LwIP\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Inc\Adc.h">
@@ -408,6 +537,24 @@
     </ClInclude>
     <ClInclude Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\integer.h">
       <Filter>FatFs Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\Usb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\app_ethernet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\ethernetif.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\lwipopts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\tcp_echoserver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Inc\Network.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

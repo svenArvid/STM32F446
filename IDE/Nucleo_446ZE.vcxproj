@@ -69,7 +69,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)\VS_Include;$(ProjectDir)\..\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Core\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Src;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src;c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\stdint.h;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\VS_Include;$(ProjectDir)\..\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Core\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Src;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Class\MSC\Inc;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Inc;c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\stdint.h;$(IncludePath)</IncludePath>
     <ExecutablePath />
     <ReferencePath />
     <LibraryPath />
@@ -78,7 +78,7 @@
     <ExcludePath />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)\VS_Include;$(ProjectDir)\..\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Core\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Src;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src;c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\stdint.h;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\VS_Include;$(ProjectDir)\..\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Core\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Src;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Class\MSC\Inc;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Inc;c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\stdint.h;$(IncludePath)</IncludePath>
     <ExecutablePath />
     <ReferencePath />
     <LibraryPath />
@@ -87,7 +87,7 @@
     <ExcludePath />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)\VS_Include;$(ProjectDir)\..\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Core\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Src;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src;c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\stdint.h;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\VS_Include;$(ProjectDir)\..\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Core\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Src;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Class\MSC\Inc;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Inc;c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\stdint.h;$(IncludePath)</IncludePath>
     <ExecutablePath />
     <ReferencePath />
     <LibraryPath />
@@ -96,7 +96,7 @@
     <ExcludePath />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)\VS_Include;$(ProjectDir)\..\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Core\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Src;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src;c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\stdint.h;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\VS_Include;$(ProjectDir)\..\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Core\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\CMSIS\Include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Inc;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Src;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\include;$(ProjectDir)\..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Class\MSC\Inc;C:\Users\Joakim\Documents\Jobb\STM32F446\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Inc;c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\stdint.h;$(IncludePath)</IncludePath>
     <ExecutablePath />
     <ReferencePath />
     <LibraryPath />
@@ -228,12 +228,47 @@
     <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fsmc.c" />
     <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_sdmmc.c" />
     <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_usb.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Class\MSC\Src\usbh_msc.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Class\MSC\Src\usbh_msc_bot.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Class\MSC\Src\usbh_msc_scsi.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Src\usbh_conf_template.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Src\usbh_core.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Src\usbh_ctlreq.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Src\usbh_ioreq.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\ST\STM32_USB_Host_Library\Core\Src\usbh_pipes.c" />
     <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\diskio.c" />
     <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\ff.c" />
     <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\ff_gen_drv.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\def.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\dns.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\inet_chksum.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\init.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ip.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\autoip.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\dhcp.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\etharp.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\icmp.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\igmp.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\ip4.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\ip4_addr.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\ipv4\ip4_frag.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\mem.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\memp.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\netif.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\pbuf.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\raw.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\stats.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\sys.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\tcp.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\tcp_in.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\tcp_out.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\timeouts.c" />
+    <ClCompile Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\LwIP\src\core\udp.c" />
     <ClCompile Include="..\Src\Adc.c" />
+    <ClCompile Include="..\Src\app_ethernet.c" />
     <ClCompile Include="..\Src\Crc.c" />
     <ClCompile Include="..\Src\ErrorHandler.c" />
+    <ClCompile Include="..\Src\ethernetif.c" />
     <ClCompile Include="..\Src\ExportedSignals.c" />
     <ClCompile Include="..\Src\FlashE2p.c" />
     <ClCompile Include="..\Src\InputCapture.c" />
@@ -241,6 +276,7 @@
     <ClCompile Include="..\Src\Modbus.c" />
     <ClCompile Include="..\Src\MotorDriver.c" />
     <ClCompile Include="..\Src\NeoPixel.c" />
+    <ClCompile Include="..\Src\Network.c" />
     <ClCompile Include="..\Src\Pwm.c" />
     <ClCompile Include="..\Src\RadioReceive.c" />
     <ClCompile Include="..\Src\RadioTransmit.c" />
@@ -250,6 +286,7 @@
     <ClCompile Include="..\Src\stm32f4xx_hal_msp.c" />
     <ClCompile Include="..\Src\stm32f4xx_it.c" />
     <ClCompile Include="..\Src\system_stm32f4xx.c" />
+    <ClCompile Include="..\Src\tcp_echoserver.c" />
     <ClCompile Include="..\Src\TicToc.c" />
     <ClCompile Include="..\Src\Uart.c" />
     <ClCompile Include="..\Src\Usb.c" />
@@ -264,16 +301,20 @@
     <ClInclude Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\ff_gen_drv.h" />
     <ClInclude Include="..\..\..\STM32Cube_FW_F4_V1.24.0\Middlewares\Third_Party\FatFs\src\integer.h" />
     <ClInclude Include="..\Inc\Adc.h" />
+    <ClInclude Include="..\Inc\app_ethernet.h" />
     <ClInclude Include="..\Inc\Crc.h" />
     <ClInclude Include="..\Inc\ErrorHandler.h" />
+    <ClInclude Include="..\Inc\ethernetif.h" />
     <ClInclude Include="..\Inc\ExportedSignals.h" />
     <ClInclude Include="..\Inc\ffconf.h" />
     <ClInclude Include="..\Inc\FlashE2p.h" />
     <ClInclude Include="..\Inc\InputCapture.h" />
+    <ClInclude Include="..\Inc\lwipopts.h" />
     <ClInclude Include="..\Inc\main.h" />
     <ClInclude Include="..\Inc\Modbus.h" />
     <ClInclude Include="..\Inc\MotorDriver.h" />
     <ClInclude Include="..\Inc\NeoPixel.h" />
+    <ClInclude Include="..\Inc\Network.h" />
     <ClInclude Include="..\Inc\ProjectDefs.h" />
     <ClInclude Include="..\Inc\Pwm.h" />
     <ClInclude Include="..\Inc\RadioReceive.h" />
@@ -283,8 +324,10 @@
     <ClInclude Include="..\Inc\SpeedSensor.h" />
     <ClInclude Include="..\Inc\stm32f4xx_hal_conf.h" />
     <ClInclude Include="..\Inc\stm32f4xx_it.h" />
+    <ClInclude Include="..\Inc\tcp_echoserver.h" />
     <ClInclude Include="..\Inc\TicToc.h" />
     <ClInclude Include="..\Inc\Uart.h" />
+    <ClInclude Include="..\Inc\Usb.h" />
     <ClInclude Include="..\Inc\usbh_conf.h" />
     <ClInclude Include="..\Inc\usbh_diskio_dma.h" />
     <ClInclude Include="..\Inc\Util.h" />

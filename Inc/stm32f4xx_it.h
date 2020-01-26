@@ -65,6 +65,8 @@ void TIM5_IRQHandler(void);
 
 //void OTG_FS_IRQHandler(void);
 
+//void ETH_IRQHandler(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -7,6 +7,7 @@
 #define __STATIC_INLINE static
 #define __weak
 #define __RAM_FUNC
+#define __GNUC__
 
 //#define ... 
 

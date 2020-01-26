@@ -1,7 +1,8 @@
 Port A:
-  Pin 0, 3  // InputCapture.c TIM5_CH1,CH4  Note: PA1,PA2 not available on PCB     
-  Pin 6     // RadioTransmit.c TIM13_CH1
+  Pin 0, 3        // InputCapture.c TIM5_CH1,CH4  Note: PA1,PA2 not available on PCB     
+  Pin 6           // RadioTransmit.c TIM13_CH1
   Pin 10, 11, 12  // USB ID, USB DM & DP
+  Pin 1, 2, 7     // Ethernet: RMII_REF_CLK, RMII_MDIO, RMII_MII_CRS_DV
 
 
 Port B: 
@@ -11,11 +12,14 @@ Port B:
   Pin 4,5,1      // Pwm.c TIM3_CH1,2,4
   
   Pin 8,9,10,11  // InputCapture.c TIM2_CH1-4
+  
+  Pin 13         // Ethernet: RMII_MII_TXD1
 
   
 Port C: 
 
-  Pin 0,3  // Adc.c  
+  Pin 0, 3         // Adc.c  
+  Pin 1, 4, 5      // Ethernet: RMII_MDC, RMII_MII_RXD0, RMII_MII_RXD1
   
   
 Port D:  
@@ -36,3 +40,4 @@ Port G:
 
   Pin 9,14         // Uart.c USART6_TX/RX  9 = RX, 14 = TX
   Pin 6            // USB Power switch
+  Pin 2, 11, 13    // Ethernet: RMII_MII_RXER, RMII_MII_TX_EN, RMII_MII_TXD0

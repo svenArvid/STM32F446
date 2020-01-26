@@ -28,6 +28,7 @@
 #include "Modbus.h"
 #include "Rtc.h"
 #include "Usb.h"
+#include "Network.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -114,6 +115,7 @@ static void Main_Init(void)
   MotorDriver_Init();
   
   Usb_Init();
+  Network_Init();
 }
 
 static void Main_PrintToTerminal(void)
@@ -148,11 +150,14 @@ static void Main_PrintToTerminal(void)
 static void Loop1ms(void)
 {
   SpeedSensor_1ms();
+
+
 }
 
 static void Loop4ms(void)
 {
   SpeedSensor_4ms();
+
   Modbus_4ms();
 }
 
@@ -185,6 +190,7 @@ static void Loop100ms(void)
 
   RadioReceieve_100ms();
 
+  Network_1ms();
 }
 
 static void Loop500ms(void)
@@ -267,27 +273,22 @@ int main(void)
   *            APB1 Prescaler                 = 4
   *            APB2 Prescaler                 = 2
   *            HSE Frequency(Hz)              = 8000000
-  *            PLL_M                          = 8
+  *            PLL_M                          = 4
   *            PLL_N                          = 360
-  *            PLL_P                          = 2
-  *            PLL_Q                          = 7
-  *            PLL_R                          = 2
+  *            PLL_P                          = 4
+  *            PLL_Q                          = 15  to get 48 MHz to USB
   *            VDD(V)                         = 3.3
   *            Main regulator output voltage  = Scale1 mode
   *            Flash Latency(WS)              = 5
-  *         The USB clock configuration from PLLI2S:
-  *            PLLI2SM                        = 8
-  *            PLLI2SN                        = 192
-  *            PLLI2SQ                        = 4
   * @param  None
   * @retval None
   */
 static void SystemClock_Config(void)
 {
+  HAL_StatusTypeDef ret;
+
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
   RCC_OscInitTypeDef RCC_OscInitStruct;
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
-  HAL_StatusTypeDef ret = HAL_OK;
 
   /* Enable Power Control clock */
   __HAL_RCC_PWR_CLK_ENABLE();
@@ -302,11 +303,10 @@ static void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLM = 4;
   RCC_OscInitStruct.PLL.PLLN = 360;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 7;
-  RCC_OscInitStruct.PLL.PLLR = 2;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+  RCC_OscInitStruct.PLL.PLLQ = 15;
   ret = HAL_RCC_OscConfig(&RCC_OscInitStruct);
   
   /* Activate the OverDrive to reach the 180 MHz Frequency */  
@@ -315,15 +315,7 @@ static void SystemClock_Config(void)
   {
     while(1) { ; }
   }
- 
-  /* Select PLLSAI output as USB clock source */
-  PeriphClkInitStruct.PLLSAI.PLLSAIM = 8;
-  PeriphClkInitStruct.PLLSAI.PLLSAIN = 384;
-  PeriphClkInitStruct.PLLSAI.PLLSAIP = RCC_PLLSAIP_DIV8;
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_CK48;
-  PeriphClkInitStruct.Clk48ClockSelection = RCC_CK48CLKSOURCE_PLLSAIP;
-  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
-
+  
   /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 clocks dividers */
   RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
